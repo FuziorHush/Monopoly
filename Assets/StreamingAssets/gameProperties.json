@@ -1,0 +1,99 @@
+{
+  "StartPlayerBalance": 500,
+  "LoopPayment": 200,
+
+  "Estates": [
+    {
+      "Name": "Cairo",
+      "BaseQuantity": "60"
+    },
+    {
+      "Name": "Lagos",
+      "BaseQuantity": "60"
+    },
+    {
+      "Name": "Kinshasa",
+      "BaseQuantity": "70"
+    },
+    {
+      "Name": "Buenos Aires",
+      "BaseQuantity": "90"
+    },
+    {
+      "Name": "Mexico City",
+      "BaseQuantity": "90"
+    },
+    {
+      "Name": "Sao Paulo",
+      "BaseQuantity": "100"
+    },
+    {
+      "Name": "Tehran",
+      "BaseQuantity": "120"
+    },
+    {
+      "Name": "Istanbul",
+      "BaseQuantity": "120"
+    },
+    {
+      "Name": "Mumbai",
+      "BaseQuantity": "130"
+    },
+    {
+      "Name": "Minsk",
+      "BaseQuantity": "150"
+    },
+    {
+      "Name": "Kyiv",
+      "BaseQuantity": "150"
+    },
+    {
+      "Name": "Moscow",
+      "BaseQuantity": "160"
+    },
+    {
+      "Name": "Sydney",
+      "BaseQuantity": "180"
+    },
+    {
+      "Name": "Jakarta",
+      "BaseQuantity": "180"
+    },
+    {
+      "Name": "Singapore",
+      "BaseQuantity": "190"
+    },
+    {
+      "Name": "Seoul",
+      "BaseQuantity": "210"
+    },
+    {
+      "Name": "Tokyo",
+      "BaseQuantity": "210"
+    },
+    {
+      "Name": "Shanghai",
+      "BaseQuantity": "220"
+    },
+    {
+      "Name": "Berlin",
+      "BaseQuantity": "240"
+    },
+    {
+      "Name": "Paris",
+      "BaseQuantity": "240"
+    },
+    {
+      "Name": "London",
+      "BaseQuantity": "250"
+    },
+    {
+      "Name": "Toronto",
+      "BaseQuantity": "280"
+    },
+    {
+      "Name": "New York",
+      "BaseQuantity": "300"
+    }
+  ]
+}
