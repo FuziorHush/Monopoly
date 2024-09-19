@@ -34,6 +34,7 @@ public class HUDController : MonoSingleton<HUDController>
         GameEvents.NewTurn += OnNewTurn;
         GameEvents.MatchStarted += OnMatchStarted;
         GameEvents.CardTriggered += OnCardTriggered;
+        GameEvents.PlayerBalanceIsNegative += OnPlayerBalanceIsNegative;
     }
 
     private void Start()
@@ -85,6 +86,17 @@ public class HUDController : MonoSingleton<HUDController>
     private void OnPlayerBalanceChanged(Player player, float delta, float balance)
     {
         _balanceTexts[player.Number].text = player.Name + " " + balance.ToString() + "$";
+
+        if (GameFlowController.Instance.PlayerWhoTurn == player)
+        {
+            if (balance >= 0 && balance - delta < 0)
+            {
+                if (GameFlowController.Instance.DicesActive)
+                    _tossDices.interactable = true;
+
+                _newTurn.interactable = true;
+            }
+        }
     }
 
     private void OnNewTurn(Player player)
@@ -112,5 +124,14 @@ public class HUDController : MonoSingleton<HUDController>
         yield return new WaitForSeconds(_cardAnimationTime * 2);
         _cardAnimation.DOLocalMoveY(_cardAnimationOffset, _cardAnimationTime).OnComplete(delegate { _cardAnimation.anchoredPosition = new Vector3(0, -_cardAnimationOffset, 0); });
         GameEvents.MoveAnimationEnded?.Invoke();
+    }
+
+    private void OnPlayerBalanceIsNegative(Player player, float balance)
+    {
+        if (GameFlowController.Instance.PlayerWhoTurn == player)
+        {
+            _tossDices.interactable = false;
+            _newTurn.interactable = false;
+        }
     }
 }

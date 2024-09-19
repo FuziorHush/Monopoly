@@ -16,6 +16,9 @@ public class EstateFieldCell : FieldCell
 
     public override void Interact(Player player)
     {
+        if (_estate.PledgedAmount > 0)
+            return;
+
         if (_estate.Owner == null)
         {
             EstateMenu.Instance.Open(player, _estate);
@@ -35,15 +38,20 @@ public class EstateFieldCell : FieldCell
             }
 
             GameEvents.PlayerPayedTaxesToPlayer?.Invoke(player, _estate.Owner, taxValue);
-            GameEvents.PlayerFieldCellInteractionEnded(player, true);
-        }
-        else {
-            GameEvents.PlayerFieldCellInteractionEnded(player, true);
         }
     }
 
     protected override void ShowInfo()
     {
         InfoMenu.Instance.ShowInfoEstate(_estate);
+    }
+
+    public override void Clicked(Player player)
+    {
+        if (GameFlowController.Instance.PlayerWhoTurn.Balance < 0) {
+            float pledge = Mathf.RoundToInt(_estate.CurrentQuantity / 2);
+            _estate.PledgedAmount = pledge;
+            GameFlowController.Instance.PlayerWhoTurn.Balance += pledge;
+        }
     }
 }

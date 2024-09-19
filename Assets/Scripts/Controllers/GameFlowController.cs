@@ -11,14 +11,17 @@ public class GameFlowController : MonoSingleton<GameFlowController>
     public Player PlayerWhoTurn { get; private set; }
     private int _playerWhoTurnNum;
     private int _diceDoublesInTurn;
+
     public bool DicesActive { get; private set; }
     //private Dictionary<string, bool> _currentAvilableActions;
 
     public bool CurrentPlayerCanUseTrain { get; set; }
+    public bool DontInteractWithNextCell { get; set; }
 
     protected override void Awake()
     {
         base.Awake();
+        LanguageSystem.Instance.LoadLanguage("ru_RU");
     }
 
     public void Start()
@@ -26,6 +29,8 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         GamePropertiesController.Instance.Init();
         FieldController.Instance.Init();
         EstateMenu.Instance.Init();
+
+        GameEvents.PlayerBalanceIsNegative += OnPlayerBalanceIsNegative;
 
         StartMatch();
     }
@@ -112,7 +117,7 @@ public class GameFlowController : MonoSingleton<GameFlowController>
     {
         PlayerWhoTurn = Players[0];
         _playerWhoTurnNum = 0;
-       // _currentAvilableActions["dice"] = true;
+        // _currentAvilableActions["dice"] = true;
     }
 
     public void NextTurn()
@@ -136,5 +141,34 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         Players.Add(player);
         GameEvents.PlayerCreated?.Invoke(player);
         return player;
+    }
+
+    private void OnPlayerBalanceIsNegative(Player player, float balance) 
+    {
+        CheckIfPlayerCanPledge(player, balance);
+    }
+
+    private void CheckIfPlayerCanPledge(Player player, float balance) 
+    {
+        for (int i = 0; i < player.EstatesOwn.Count; i++)
+        {
+            balance += Mathf.RoundToInt((player.EstatesOwn[i].CurrentQuantity) / 2);
+            if (balance >= 0) {
+                return;
+            }
+        }
+
+        RemovePlayer(player);
+        NextTurn();
+    }
+
+    private void RemovePlayer(Player player)
+    {
+        for (int i = 0; i < player.EstatesOwn.Count; i++)
+        {
+            player.EstatesOwn[i].ResetEstate();
+        }
+        Players.Remove(player);
+        Destroy(player.AvatarTransform.gameObject);
     }
 }

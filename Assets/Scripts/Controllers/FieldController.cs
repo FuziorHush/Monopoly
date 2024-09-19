@@ -10,6 +10,7 @@ public class FieldController : MonoSingleton<FieldController>
     [SerializeField] private Vector2[] _playersPositionIndents;
     [SerializeField] private GameObject _playerAvatarPrefab;
     [SerializeField] private Transform _playerAvatarsParent;
+    [SerializeField] private PlayerAvatarBuilder _playerAvatarBuilder;
     private Vector3 _startCellPos;
     private int _cellsNum;
 
@@ -35,7 +36,10 @@ public class FieldController : MonoSingleton<FieldController>
     public Transform CreatePlayerAvatar(int number) 
     {
         Vector3 spawnPos = new Vector3(_startCellPos.x + _playersPositionIndents[number].x, _startCellPos.y + _playersPositionIndents[number].y, 0);
-        return Instantiate(_playerAvatarPrefab, spawnPos, Quaternion.identity, _playerAvatarsParent).transform;
+        Transform playerAvatar = _playerAvatarBuilder.CreateAvatar(number, number).transform;
+        playerAvatar.position = spawnPos;
+        playerAvatar.SetParent(_playerAvatarsParent);
+        return playerAvatar;
     }
 
     public void GoOnCellByID(Player player, int cell)
@@ -43,7 +47,7 @@ public class FieldController : MonoSingleton<FieldController>
         int steps = -1;
         if (cell < player.CellOn)
         {
-            steps = _cellsNum - player.CellOn + cell; //20 - 12 + 5
+            steps = _cellsNum - player.CellOn + cell; //36 - 14 + 5
         }
         else if (cell == player.CellOn)
         {
@@ -93,6 +97,14 @@ public class FieldController : MonoSingleton<FieldController>
     private void OnAnimationEnd()
     {
         GameEvents.MoveAnimationEnded?.Invoke();
-        _targetCell.Interact(_actingPlayer);
+
+        if (GameFlowController.Instance.DontInteractWithNextCell)
+        {
+            GameFlowController.Instance.DontInteractWithNextCell = false;
+        }
+        else
+        {
+            _targetCell.Interact(_actingPlayer);
+        }
     }
 }

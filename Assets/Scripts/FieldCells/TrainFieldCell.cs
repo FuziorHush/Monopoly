@@ -10,11 +10,12 @@ public class TrainFieldCell : FieldCell
 
     public override void Clicked(Player player)
     {
-        if (GameFlowController.Instance.PlayerWhoTurn.CellOn == CellID || !GameFlowController.Instance.CurrentPlayerCanUseTrain)
-            return;
-
-        FieldController.Instance.GoOnCellByID(player, CellID);
-        GameFlowController.Instance.CurrentPlayerCanUseTrain = false;
+        if (GameFlowController.Instance.PlayerWhoTurn.CellOn != CellID && GameFlowController.Instance.CurrentPlayerCanUseTrain)
+        {
+            FieldController.Instance.GoOnCellByID(player, CellID);
+            GameFlowController.Instance.DontInteractWithNextCell = true;
+            GameFlowController.Instance.CurrentPlayerCanUseTrain = false;
+        }
     }
 
     public override void Interact(Player player)

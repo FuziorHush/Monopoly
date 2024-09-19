@@ -18,4 +18,15 @@ public class Estate
     public float TaxesCoef { get; set; }
     public Player Owner { get; set; }
     public int Level { get; set; }
+    public float PledgedAmount { get; set; }
+
+    public void ResetEstate() 
+    {
+        CurrentQuantity = 0;
+        Owner = null;
+        Level = 1;
+        PledgedAmount = 0;
+
+        GameEvents.EstateReseted?.Invoke(this);
+    }
 }
