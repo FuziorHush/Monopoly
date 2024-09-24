@@ -21,12 +21,10 @@ public class GameFlowController : MonoSingleton<GameFlowController>
     protected override void Awake()
     {
         base.Awake();
-        LanguageSystem.Instance.LoadLanguage("ru_RU");
     }
 
     public void Start()
     {
-        GamePropertiesController.Instance.Init();
         FieldController.Instance.Init();
         EstateMenu.Instance.Init();
 

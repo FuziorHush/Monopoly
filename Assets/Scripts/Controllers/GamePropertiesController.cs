@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class GamePropertiesController : MonoSingleton<GamePropertiesController>
 {
-    [SerializeField] private GamePropertiesLoader _gamePropertiesLoader;
-
     public GameProperties GameProperties { get; private set; }
 
     protected override void Awake()
@@ -13,8 +11,9 @@ public class GamePropertiesController : MonoSingleton<GamePropertiesController>
         base.Awake();
     }
 
-    public void Init()
+    public void Init(GameProperties properties)
     {
-        GameProperties = _gamePropertiesLoader.LoadProperties();
+        GameProperties = properties;
+        DontDestroyOnLoad(gameObject);
     }
 }

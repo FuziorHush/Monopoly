@@ -7,11 +7,20 @@ using System.IO;
 public class GamePropertiesLoader : MonoBehaviour
 {
     private string _path;
+    public static bool IsLoaded { get; private set; }
 
     private void Awake()
     {
-        _path = Application.streamingAssetsPath + "/gameProperties.json";
-        LoadProperties();
+        if (!IsLoaded)
+        {
+            _path = Application.streamingAssetsPath + "/gameProperties.json";
+            gameObject.AddComponent<GamePropertiesController>().Init(LoadProperties());
+            IsLoaded = true;
+            Destroy(this);
+        }
+        else {
+            Destroy(gameObject);
+        }
     }
 
     public GameProperties LoadProperties()

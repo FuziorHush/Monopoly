@@ -13,6 +13,8 @@ public class LanguageSystem : MonoSingleton<LanguageSystem>
     protected override void Awake()
     {
         base.Awake();
+        DontDestroyOnLoad(gameObject);
+        LoadLanguage("ru_RU");
     }
 
     public bool LoadLanguage(string lang) {
