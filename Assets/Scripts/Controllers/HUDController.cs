@@ -19,6 +19,8 @@ public class HUDController : MonoSingleton<HUDController>
     [SerializeField] private float _cardAnimationTime;
     [SerializeField] private TMP_Text _cardText;
 
+    [SerializeField] private TMP_Text _endMessage;
+
     private List<TMP_Text> _balanceTexts = new List<TMP_Text>();
 
     protected override void Awake()
@@ -35,6 +37,7 @@ public class HUDController : MonoSingleton<HUDController>
         GameEvents.MatchStarted += OnMatchStarted;
         GameEvents.CardTriggered += OnCardTriggered;
         GameEvents.PlayerBalanceIsNegative += OnPlayerBalanceIsNegative;
+        GameEvents.MatchEnded += OnMatchEnded;
     }
 
     private void Start()
@@ -113,8 +116,15 @@ public class HUDController : MonoSingleton<HUDController>
     }
 
     private void OnCardTriggered(int cardID, CardDeck deck, Player player) {
+        if (deck is ChanceDeck)
+        {
+            _cardText.text = LanguageSystem.Instance[$"card_chance{cardID}"];
+        }
+        else if (deck is LuckDeck) 
+        {
+            _cardText.text = LanguageSystem.Instance[$"card_luck{cardID}"];
+        }
         StartCoroutine("PlayCardAnimation");
-        _cardText.text = cardID.ToString();
     }
 
     private IEnumerator PlayCardAnimation() 
@@ -132,6 +142,21 @@ public class HUDController : MonoSingleton<HUDController>
         {
             _tossDices.interactable = false;
             _newTurn.interactable = false;
+        }
+    }
+
+    private void OnMatchEnded(Team teamWinner)
+    {
+        if (teamWinner == null)
+        {
+            _endMessage.text = "Tie";
+        }
+        else if (teamWinner.NumPlayers == 1)
+        {
+            _endMessage.text = teamWinner[0] + " wins";
+        }
+        else {
+            _endMessage.text = teamWinner.Name + " wins";
         }
     }
 }

@@ -37,7 +37,7 @@ public class GameFlowController : MonoSingleton<GameFlowController>
     {
         for (int i = 0; i < 4; i++)
         {
-            CreatePlayer($"player{i + 1}", i).Balance = 500;
+            CreatePlayer($"player{i + 1}", i, null).Balance = GamePropertiesController.Instance.GameProperties.StartPlayerBalance;
         }
 
         Teams.Add(new Team("team1"));
@@ -48,31 +48,15 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         Teams[0].AddPlayer(Players[2]);
         Teams[0].AddPlayer(Players[3]);
 
-        //_currentAvilableActions = new Dictionary<string, bool>();
-        //_currentAvilableActions.Add("dice", false);
-        //_currentAvilableActions.Add("estate", false);
-        //_currentAvilableActions.Add("goj", false);
-
         InitFirstTurn();
 
         GameEvents.MatchStarted?.Invoke();
     }
 
-    /*
-    public void SetTurnAction(string name, bool state)
-    {
-        _currentAvilableActions[name] = state;
-        if (AllTurnActionsInactive())
-            NextTurn();
-    }
-
-    public bool GetTurnActionState(string name) {
-        return _currentAvilableActions[name];
-    }*/
-
     public void MakeTurn()
     {
         CurrentPlayerCanUseTrain = false;
+        DontInteractWithNextCell = false;
 
         Vector2Int dicesValue = TossDices();
         DicesActive = false;
@@ -101,21 +85,10 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         return dicesValue;
     }
 
-    /*
-    private bool AllTurnActionsInactive() {
-        foreach (KeyValuePair<string, bool> entry in _currentAvilableActions)
-        {
-            if (entry.Value)
-                return false;
-        }
-        return true;
-    }*/
-
     private void InitFirstTurn()
     {
         PlayerWhoTurn = Players[0];
         _playerWhoTurnNum = 0;
-        // _currentAvilableActions["dice"] = true;
     }
 
     public void NextTurn()
@@ -133,9 +106,16 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         GameEvents.NewTurn?.Invoke(PlayerWhoTurn);
     }
 
-    private Player CreatePlayer(string name, int number)
+    private Player CreatePlayer(string name, int number, Photon.Realtime.Player networkPlayer)
     {
-        Player player = new Player(name, number, FieldController.Instance.CreatePlayerAvatar(number));
+        Player player;
+        if (networkPlayer == null)
+            player = new Player(name, number, FieldController.Instance.CreatePlayerAvatar(number), StaticData.Instance.AvatarColors[number]);
+        else {
+            player = new Player(name, number, FieldController.Instance.CreatePlayerAvatar(number), StaticData.Instance.AvatarColors[(int)networkPlayer.CustomProperties["Color"]]);
+            player.NetworkPlayer = networkPlayer;
+        }
+
         Players.Add(player);
         GameEvents.PlayerCreated?.Invoke(player);
         return player;
@@ -146,18 +126,33 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         CheckIfPlayerCanPledge(player, balance);
     }
 
-    private void CheckIfPlayerCanPledge(Player player, float balance) 
+    private void CheckIfPlayerCanPledge(Player player, float balance)
     {
         for (int i = 0; i < player.EstatesOwn.Count; i++)
         {
             balance += Mathf.RoundToInt((player.EstatesOwn[i].CurrentQuantity) / 2);
-            if (balance >= 0) {
+            if (balance >= 0)
+            {
                 return;
             }
         }
 
         RemovePlayer(player);
-        NextTurn();
+
+        if (Teams.Count == 1)
+        {
+            GameEvents.MatchEnded?.Invoke(Teams[0]);
+            StartCoroutine(CloseRoom());
+        }
+        else if (Teams.Count == 0)
+        {
+            GameEvents.MatchEnded?.Invoke(null);
+            StartCoroutine(CloseRoom());
+        }
+        else
+        {
+            NextTurn();
+        }
     }
 
     private void RemovePlayer(Player player)
@@ -166,7 +161,24 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         {
             player.EstatesOwn[i].ResetEstate();
         }
+
+        for (int i = 0; i < Teams.Count; i++)
+        {
+            if (Teams[i].Contains(player))
+            {
+                Teams[i].RemovePlayer(player);
+                Teams.RemoveAt(i);
+                break;
+            }
+        }
+
         Players.Remove(player);
         Destroy(player.AvatarTransform.gameObject);
+    }
+
+    private IEnumerator CloseRoom() 
+    {
+        yield return new WaitForSeconds(2);
+        //destroyRoom
     }
 }

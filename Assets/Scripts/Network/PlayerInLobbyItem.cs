@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class PlayerInLobbyItem : MonoBehaviour
 {
@@ -12,13 +13,26 @@ public class PlayerInLobbyItem : MonoBehaviour
     [SerializeField] private Image _avatarPreviewForeground;
     [SerializeField] private Image _avatarPreviewBackground;
 
-    public void Init(string nickname, AvatarColor avatarColor, Sprite icon) 
+    private RoomManager _roomManager;
+
+    public void Init(string nickname, AvatarColor avatarColor, Sprite icon, RoomManager roomManager) 
     {
+        _teamDropdown.onValueChanged.AddListener(delegate { OnTeamDropdownValueChanged(); });
+
         Owner = nickname;
         _nameText.text = nickname;
         _avatarPreviewForeground.color = avatarColor.FrontColor;
         _avatarPreviewBackground.color = avatarColor.BackColor;
         _avatarPreviewForeground.sprite = icon;
+        _roomManager = roomManager;
+
+        if (PhotonNetwork.NickName == nickname)
+        {
+            _teamDropdown.interactable = true;
+        }
+        else {
+            _teamDropdown.interactable = false;
+        }
     }
 
     public void SetColor(AvatarColor avatarColor) {
@@ -29,5 +43,18 @@ public class PlayerInLobbyItem : MonoBehaviour
     public void SetIcon(Sprite icon)
     {
         _avatarPreviewForeground.sprite = icon;
+    }
+
+    public void SetTeam(int team)
+    {
+        _teamDropdown.SetValueWithoutNotify(team);
+    }
+
+    public void OnTeamDropdownValueChanged() 
+    {
+        if (PhotonNetwork.NickName == Owner)
+        {
+            _roomManager.SetPlayerTeam(_teamDropdown.value);
+        }
     }
 }

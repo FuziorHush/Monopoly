@@ -5,10 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class Estate
 {
-    public Estate(string name, float baseQuantity) {
+    public Estate(string name, float baseQuantity, EstateFieldCell cell) {
         Name = name;
         BaseQuantity = baseQuantity;
         TaxesCoef = 0.1f;
+        CellLink = cell;
     }
 
     public string Name { get; private set; }
@@ -19,6 +20,9 @@ public class Estate
     public Player Owner { get; set; }
     public int Level { get; set; }
     public float PledgedAmount { get; set; }
+    public bool OlympBonusApplied { get; set; }
+
+    public EstateFieldCell CellLink { get; private set; }
 
     public void ResetEstate() 
     {
@@ -28,5 +32,7 @@ public class Estate
         PledgedAmount = 0;
 
         GameEvents.EstateReseted?.Invoke(this);
+
+            CellLink.UpdateBuildingSprite();
     }
 }

@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &300093879800321105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 300093879800321107}
+  - component: {fileID: 300093879800321106}
+  m_Layer: 0
+  m_Name: StaticSata
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &300093879800321107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300093879800321105}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.83293784, y: -1.3447474, z: -4.091326}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &300093879800321106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300093879800321105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e8b64f26a8e0174189ce0559ae4b4ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerIcons:
+  - {fileID: -336253661, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: 994187735, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -571300266, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: 706950167, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -1962422794, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: 649319404, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -609777081, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -1524260712, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -1226554751, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: 1427367098, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -111076289, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: 840055023, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -429913507, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: 2117318099, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  - {fileID: -908300289, guid: 218a962efebcd29418274f0b8717d000, type: 3}
+  AvatarColors: []
+  BuildingsSprites:
+  - {fileID: 21300000, guid: 8d1d7ae1e1cb7b54c8eac88283a7ac04, type: 3}
+  - {fileID: 21300000, guid: a4367d0d938739b4fbe920741770d82b, type: 3}
+  - {fileID: 21300000, guid: ddca0b1cb67fac3429540f29cb397419, type: 3}
+  - {fileID: 21300000, guid: de9e36194633bd845a6e4bd6691c56fb, type: 3}
+  - {fileID: 21300000, guid: 1e52a33cb5dfe9e4082105cf839713f6, type: 3}

@@ -23,9 +23,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private List<GameObject> _colorItems = new List<GameObject>();
     private List<GameObject> _iconItems = new List<GameObject>();
 
-    [SerializeField] private Sprite[] _sprites;
-    private AvatarColor[] _avatarColors;
-
     [SerializeField] private Color _selectedColor;
 
     private PlayerInLobbyItem _myPlayerLobbyItem;
@@ -38,24 +35,25 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         _startButton.onClick.AddListener(StartGame);
         _leaveButton.onClick.AddListener(LeaveRoom);
-        _avatarColors = Resources.LoadAll<AvatarColor>("AvatarColors");
         _startBalanceInput.text = GamePropertiesController.Instance.GameProperties.StartPlayerBalance.ToString();
 
-        for (int i = 0; i < _avatarColors.Length; i++)
+        AvatarColor[] avatarColors = StaticData.Instance.AvatarColors;
+        for (int i = 0; i < avatarColors.Length; i++)
         {
             GameObject colorItem = Instantiate(_colorItemPrefab, _colorItemsParent).gameObject;
             int cl = i;
             colorItem.GetComponent<Button>().onClick.AddListener(delegate { SetPlayerColorID(cl); });
-            colorItem.transform.GetChild(0).GetComponent<Image>().color = _avatarColors[i].FrontColor;
+            colorItem.transform.GetChild(0).GetComponent<Image>().color = avatarColors[i].FrontColor;
             _colorItems.Add(colorItem);
         }
 
-        for (int i = 0; i < _sprites.Length; i++)
+        Sprite[] playerIcons = StaticData.Instance.PlayerIcons;
+        for (int i = 0; i < playerIcons.Length; i++)
         {
             GameObject spriteItem = Instantiate(_iconItemPrefab, _iconItemsParent).gameObject;
             int cl = i;
             spriteItem.GetComponent<Button>().onClick.AddListener(delegate { SetPlayerSpriteID(cl); });
-            spriteItem.GetComponent<Image>().sprite = _sprites[i];
+            spriteItem.GetComponent<Image>().sprite = playerIcons[i];
             _iconItems.Add(spriteItem);
         }
     }
@@ -130,14 +128,25 @@ public class RoomManager : MonoBehaviourPunCallbacks
         PhotonNetwork.SetPlayerCustomProperties(_props);
     }
 
-    public void SetPlayerSpriteInList(PlayerInLobbyItem playerItem, int spriteID) 
+    public void SetPlayerTeam(int team)
     {
-        playerItem.SetIcon(_sprites[spriteID]);
+        _props["Team"] = team;
+        PhotonNetwork.SetPlayerCustomProperties(_props);
+    }
+
+    public void SetPlayerIconInList(PlayerInLobbyItem playerItem, int spriteID) 
+    {
+        playerItem.SetIcon(StaticData.Instance.PlayerIcons[spriteID]);
     }
 
     public void SetPlayerColorInList(PlayerInLobbyItem playerItem, int colorID)
     {
-        playerItem.SetColor(_avatarColors[colorID]);
+        playerItem.SetColor(StaticData.Instance.AvatarColors[colorID]);
+    }
+
+    public void SetPlayerTeamInList(PlayerInLobbyItem playerItem, int team)
+    {
+        playerItem.SetTeam(team);
     }
 
     private void UpdatePlayerList()
@@ -155,7 +164,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         foreach (KeyValuePair <int, Photon.Realtime.Player> player in PhotonNetwork.CurrentRoom.Players)
         {
             PlayerInLobbyItem playerItem = Instantiate(_playerItemPrefab, _playerItemsParent).GetComponent<PlayerInLobbyItem>();
-            playerItem.Init(player.Value.NickName, _avatarColors[0], _sprites[0]);
+            playerItem.Init(player.Value.NickName, StaticData.Instance.AvatarColors[0], StaticData.Instance.PlayerIcons[0], this);
             _playerInLobbyItems.Add(playerItem);
 
             if (player.Value.NickName == PhotonNetwork.NickName) {
@@ -168,6 +177,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         _props["Color"] = 0;
         _props["Icon"] = 0;
+        _props["Team"] = 0;
         PhotonNetwork.SetPlayerCustomProperties(_props);
     }
 
@@ -182,8 +192,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 {
                     SetPlayerColorInList(_playerInLobbyItems[i], (int)changedProps["Color"]);
                 }
-                if (changedProps.ContainsKey("Icon")) {
-                    SetPlayerSpriteInList(_playerInLobbyItems[i], (int)changedProps["Icon"]);
+                if (changedProps.ContainsKey("Icon")) 
+                {
+                    SetPlayerIconInList(_playerInLobbyItems[i], (int)changedProps["Icon"]);
+                }
+                if (changedProps.ContainsKey("Team") && targetPlayer != PhotonNetwork.LocalPlayer)
+                {
+                    SetPlayerTeamInList(_playerInLobbyItems[i], (int)changedProps["Team"]);
                 }
             }
         }

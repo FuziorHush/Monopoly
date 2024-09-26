@@ -72,7 +72,7 @@ public class EstateMenu : MonoSingleton<EstateMenu>
         else {
             BuyEstate(lvl);
         }
-
+        _targetEstate.CellLink.UpdateBuildingSprite();
         CloseMenu();
     }
 

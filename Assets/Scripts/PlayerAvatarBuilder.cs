@@ -4,23 +4,15 @@ using UnityEngine;
 
 public class PlayerAvatarBuilder : MonoBehaviour
 {
-    [SerializeField] private Sprite[] _sprites;
-    private AvatarColor[] _avatarColors;
-
-    [SerializeField] private GameObject _baseAvatar;
-
-    private void Awake()
-    {
-        _avatarColors = Resources.LoadAll<AvatarColor>("AvatarColors");
-    }
+    [SerializeField] private GameObject _baseAvatarPrefab;
 
     public GameObject CreateAvatar(int spriteID, int colorID) 
     {
-        GameObject avatar = Instantiate(_baseAvatar);
+        GameObject avatar = Instantiate(_baseAvatarPrefab);
         SpriteRenderer frontRenderer = avatar.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        frontRenderer.sprite = _sprites[spriteID];
-        frontRenderer.color = _avatarColors[colorID].FrontColor;
-        avatar.transform.GetChild(1).GetComponent<SpriteRenderer>().color = _avatarColors[colorID].BackColor;
+        frontRenderer.sprite = StaticData.Instance.PlayerIcons[spriteID];
+        frontRenderer.color = StaticData.Instance.AvatarColors[colorID].FrontColor;
+        avatar.transform.GetChild(1).GetComponent<SpriteRenderer>().color = StaticData.Instance.AvatarColors[colorID].BackColor;
         return avatar;
     }
 }

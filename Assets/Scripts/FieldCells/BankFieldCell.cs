@@ -2,19 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OlympFieldCell : FieldCell
+public class BankFieldCell : FieldCell
 {
     public override void Init()
     {
+
     }
 
     public override void Interact(Player player)
     {
-        OlympController.Instance.ActivateBonus();
+        HandOverMoneyMenu.Instance.Open(player);
     }
 
     protected override void ShowInfo()
     {
-        InfoMenu.Instance.ShowInfoOlymp();
+        InfoMenu.Instance.ShowInfoStart();
+    }
+
+    public override void Clicked(Player player)
+    {
+
     }
 }

@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class Player
 {
-    public Player(string name, int number, Transform avatarTransform)
+    public Player(string name, int number, Transform avatarTransform, AvatarColor avatarColor)
     {
         Name = name;
         Number = number;
         EstatesOwn = new List<Estate>();
         AvatarTransform = avatarTransform;
+        AvatarColor = avatarColor;
     }
 
     public string Name { get; private set; }
     public int Number { get; private set; }
+    public AvatarColor AvatarColor { get; private set; }
 
     private float _balance;
     public float Balance {
@@ -34,5 +36,5 @@ public class Player
     public List<Estate> EstatesOwn { get; private set; }
     public Transform AvatarTransform { get; private set; }
 
-    public Photon.Realtime.Player User { get; set; }
+    public Photon.Realtime.Player NetworkPlayer { get; set; }
 }

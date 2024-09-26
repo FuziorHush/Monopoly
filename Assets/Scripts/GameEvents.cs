@@ -22,6 +22,8 @@ public static class GameEvents
     public static UnityAction<Player> PlayerSentToJail;
     public static UnityAction<Player> PlayerFreedFromJail;
     public static UnityAction MatchStarted;
+    public static UnityAction<Team> MatchEnded;
     public static UnityAction<int, CardDeck, Player> CardTriggered;
+    public static UnityAction<Estate> EstateUpdated;
     public static UnityAction<Estate> EstateReseted;
 }
