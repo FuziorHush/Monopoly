@@ -25,15 +25,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private Color _selectedColor;
 
-    private PlayerInLobbyItem _myPlayerLobbyItem;
-    private int _currentColorID;
-    private int _currentIconID;
-
     ExitGames.Client.Photon.Hashtable _props = new ExitGames.Client.Photon.Hashtable();
 
     private void Awake()
     {
-        _startButton.onClick.AddListener(StartGame);
         _leaveButton.onClick.AddListener(LeaveRoom);
         _startBalanceInput.text = GamePropertiesController.Instance.GameProperties.StartPlayerBalance.ToString();
 
@@ -70,6 +65,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            _startButton.onClick.AddListener(StartGame);
+            _startButton.interactable = true;
+        }
+        else
+        {
+            _startButton.interactable = false;
+        }
+
         CreatePlayerCustomProperties();
         UpdatePlayerList();
     }
@@ -79,9 +84,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         UpdatePlayerList();
     }
 
-    public override void OnPlayerLeftRoom(Photon.Realtime.Player newPlayer)
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player player)
     {
-
         UpdatePlayerList();
     }
 
@@ -97,6 +101,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         }
         GamePropertiesController.Instance.GameProperties.StartPlayerBalance = startBalance;
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.CurrentRoom.IsVisible = false;
         PhotonNetwork.LoadLevel(2);
     }
 
@@ -166,10 +172,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
             PlayerInLobbyItem playerItem = Instantiate(_playerItemPrefab, _playerItemsParent).GetComponent<PlayerInLobbyItem>();
             playerItem.Init(player.Value.NickName, StaticData.Instance.AvatarColors[0], StaticData.Instance.PlayerIcons[0], this);
             _playerInLobbyItems.Add(playerItem);
-
-            if (player.Value.NickName == PhotonNetwork.NickName) {
-                _myPlayerLobbyItem = playerItem;
-            }
         }
     }
 

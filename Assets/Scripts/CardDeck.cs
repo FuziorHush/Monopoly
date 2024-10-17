@@ -11,16 +11,20 @@ public abstract class CardDeck : MonoBehaviour
 
     protected Player _targetPlayer;
 
-    public void TriggerRandomAction(Player player) {
+    public int TriggerRandomAction(Player player) {
         _targetPlayer = player;
         CardAction cardAction = _currentCardActions[Random.Range(0, _currentCardActions.Count)];
         cardAction();
-        print(_allCardActions.IndexOf(cardAction));
-        GameEvents.CardTriggered?.Invoke(_allCardActions.IndexOf(cardAction), this, player);
+        return _allCardActions.IndexOf(cardAction);
+    }
 
-        _currentCardActions.Remove(cardAction);
+    public void TranslateActionTrigger(int cardActionIndex, Player player) {
+        GameEvents.CardTriggered?.Invoke(cardActionIndex, this, player);
 
-        if (_currentCardActions.Count == 0) {
+        _currentCardActions.Remove(_allCardActions[cardActionIndex]);
+
+        if (_currentCardActions.Count == 0)
+        {
             _currentCardActions = new List<CardAction>(_allCardActions);
         }
     }

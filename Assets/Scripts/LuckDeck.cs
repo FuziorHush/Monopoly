@@ -28,32 +28,32 @@ public class LuckDeck : CardDeck
 
     private void Action0()
     {
-        _targetPlayer.Balance += 200;
+        BalancesController.Instance.AddBalance(_targetPlayer, 200f);
     }
 
     private void Action1()
     {
-        _targetPlayer.Balance += 25;
+        BalancesController.Instance.AddBalance(_targetPlayer, 25f);
     }
 
     private void Action2()
     {
-        _targetPlayer.GOJHas++;
+        JailController.Instance.GiveGOJ(_targetPlayer);
     }
 
     private void Action3()
     {
-        _targetPlayer.Balance += 25;
+        BalancesController.Instance.AddBalance(_targetPlayer, 25f);
     }
 
     private void Action4()
     {
-        _targetPlayer.Balance += 100;
+        BalancesController.Instance.AddBalance(_targetPlayer, 100f);
     }
 
     private void Action5()
     {
-        _targetPlayer.Balance += 25;
+        BalancesController.Instance.AddBalance(_targetPlayer, 25f);
     }
 
     private void Action6()
@@ -63,22 +63,22 @@ public class LuckDeck : CardDeck
     }
     private void Action7()
     {
-        _targetPlayer.Balance -= 50;
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 50f);
     }
 
     private void Action8()
     {
-        _targetPlayer.Balance += 10;
+        BalancesController.Instance.AddBalance(_targetPlayer, 10f);
     }
 
     private void Action9()
     {
-        _targetPlayer.Balance += 50;
+        BalancesController.Instance.AddBalance(_targetPlayer, 50f);
     }
 
     private void Action10()
     {
-        _targetPlayer.Balance -= 100;
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 100f);
     }
 
     private void Action11()
@@ -88,7 +88,7 @@ public class LuckDeck : CardDeck
 
     private void Action12()
     {
-        _targetPlayer.Balance += 100;
+        BalancesController.Instance.AddBalance(_targetPlayer, 100f);
     }
 
     private void Action13()
@@ -103,26 +103,26 @@ public class LuckDeck : CardDeck
 
             if (player.Balance > 10) {
                 moneyGet += 10;
-                player.Balance -= 10;
+                BalancesController.Instance.WidthdrawBalance(player, 10f);
             }
             else if (player.Balance > 0) {
                 moneyGet += player.Balance;
-                player.Balance = 0;
+                BalancesController.Instance.WidthdrawBalance(player, player.Balance);
             }
 
             if (moneyGet > 0) {
-                _targetPlayer.Balance += moneyGet;
+                BalancesController.Instance.AddBalance(_targetPlayer, moneyGet);
             }
         }
     }
 
     private void Action14()
     {
-        _targetPlayer.Balance -= 10;//TODO: choose to pick chance
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 10f);//TODO: choose to pick chance
     }
 
     private void Action15()
     {
-        _targetPlayer.Balance -= 50;
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 50f);
     }
 }

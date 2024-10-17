@@ -22,7 +22,6 @@ public class Player
         get => _balance;
         set {
             _balance = value;
-            GameEvents.PlayerBalanceChanged?.Invoke(this,  value, _balance);
 
             if (_balance < 0)
                 GameEvents.PlayerBalanceIsNegative?.Invoke(this, value);

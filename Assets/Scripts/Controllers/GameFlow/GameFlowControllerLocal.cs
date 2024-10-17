@@ -1,59 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class GameFlowController : MonoSingleton<GameFlowController>
+public class GameFlowControllerLocal : GameFlowController
 {
-    public List<Player> Players { get; private set; } = new List<Player>();
-    public List<Team> Teams { get; private set; } = new List<Team>();
-
-    public Player PlayerWhoTurn { get; private set; }
-    private int _playerWhoTurnNum;
-    private int _diceDoublesInTurn;
-
-    public bool DicesActive { get; private set; }
-    //private Dictionary<string, bool> _currentAvilableActions;
-
-    public bool CurrentPlayerCanUseTrain { get; set; }
-    public bool DontInteractWithNextCell { get; set; }
-
-    protected override void Awake()
+    public override void CreatePlayers()
     {
-        base.Awake();
+       // for(int i = 0; i< )
+
+        int playersCount = Players.Count;
+        Transform playerAvatar = FieldController.Instance.CreatePlayerAvatar(playersCount);
+        Player player = new Player("Player" + (playersCount + 1), playersCount, playerAvatar, StaticData.Instance.AvatarColors[playersCount]);
+
+        Players.Add(player);
+        GameEvents.PlayerCreated?.Invoke(player);
     }
 
-    public void Start()
+    public override void StartMatch()
     {
-        FieldController.Instance.Init();
-        EstateMenu.Instance.Init();
-
-        GameEvents.PlayerBalanceIsNegative += OnPlayerBalanceIsNegative;
-
-        StartMatch();
-    }
-
-    public void StartMatch()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            CreatePlayer($"player{i + 1}", i, null).Balance = GamePropertiesController.Instance.GameProperties.StartPlayerBalance;
-        }
-
-        Teams.Add(new Team("team1"));
-        Teams[0].AddPlayer(Players[0]);
-        Teams[0].AddPlayer(Players[1]);
-
-        Teams.Add(new Team("team2"));
-        Teams[0].AddPlayer(Players[2]);
-        Teams[0].AddPlayer(Players[3]);
-
         InitFirstTurn();
-
         GameEvents.MatchStarted?.Invoke();
     }
 
-    public void MakeTurn()
+    public override void MakeTurn()
     {
         CurrentPlayerCanUseTrain = false;
         DontInteractWithNextCell = false;
@@ -72,7 +41,8 @@ public class GameFlowController : MonoSingleton<GameFlowController>
             _diceDoublesInTurn++;
             DicesActive = true;
         }
-        else {
+        else
+        {
             _diceDoublesInTurn = 0;
         }
         FieldController.Instance.GoForward(PlayerWhoTurn, dicesValue.x + dicesValue.y);
@@ -87,16 +57,18 @@ public class GameFlowController : MonoSingleton<GameFlowController>
 
     private void InitFirstTurn()
     {
+        print("Started");
         PlayerWhoTurn = Players[0];
         _playerWhoTurnNum = 0;
     }
 
-    public void NextTurn()
+    public override void NextTurn()
     {
         CurrentPlayerCanUseTrain = false;
 
         _playerWhoTurnNum++;
-        if (_playerWhoTurnNum == Players.Count) {
+        if (_playerWhoTurnNum == Players.Count)
+        {
             _playerWhoTurnNum = 0;
         }
         PlayerWhoTurn = Players[_playerWhoTurnNum];
@@ -106,27 +78,7 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         GameEvents.NewTurn?.Invoke(PlayerWhoTurn);
     }
 
-    private Player CreatePlayer(string name, int number, Photon.Realtime.Player networkPlayer)
-    {
-        Player player;
-        if (networkPlayer == null)
-            player = new Player(name, number, FieldController.Instance.CreatePlayerAvatar(number), StaticData.Instance.AvatarColors[number]);
-        else {
-            player = new Player(name, number, FieldController.Instance.CreatePlayerAvatar(number), StaticData.Instance.AvatarColors[(int)networkPlayer.CustomProperties["Color"]]);
-            player.NetworkPlayer = networkPlayer;
-        }
-
-        Players.Add(player);
-        GameEvents.PlayerCreated?.Invoke(player);
-        return player;
-    }
-
-    private void OnPlayerBalanceIsNegative(Player player, float balance) 
-    {
-        CheckIfPlayerCanPledge(player, balance);
-    }
-
-    private void CheckIfPlayerCanPledge(Player player, float balance)
+    protected override void CheckIfPlayerCanPledge(Player player, float balance)
     {
         for (int i = 0; i < player.EstatesOwn.Count; i++)
         {
@@ -155,7 +107,7 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         }
     }
 
-    private void RemovePlayer(Player player)
+    protected override void RemovePlayer(Player player)
     {
         for (int i = 0; i < player.EstatesOwn.Count; i++)
         {
@@ -176,7 +128,7 @@ public class GameFlowController : MonoSingleton<GameFlowController>
         Destroy(player.AvatarTransform.gameObject);
     }
 
-    private IEnumerator CloseRoom() 
+    private IEnumerator CloseRoom()
     {
         yield return new WaitForSeconds(2);
         //destroyRoom

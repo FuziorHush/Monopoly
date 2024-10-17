@@ -27,6 +27,7 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
         Instance = this;
 
         _createButton.onClick.AddListener(CreateRoom);
+        MultiplayerGameTypeController.CurrentType = MultiplayerGameType.NotStarted;
     }
 
     /*
@@ -96,5 +97,6 @@ public class CreateAndJoinRooms : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         LobbyManager.Instance.SwitchToRoomMenu();
+        MultiplayerGameTypeController.CurrentType = MultiplayerGameType.Photon;
     }
 }

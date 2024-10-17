@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public static class GameEvents
 {
     public static UnityAction LanguageChanged;
+    public static UnityAction ControllersCreated;
 
     public static UnityAction<Vector2Int> DicesTossed;
     public static UnityAction<Player> PlayerCreated;
@@ -14,8 +15,9 @@ public static class GameEvents
     public static UnityAction<Player, int, int> PlayerMoved;
     public static UnityAction<Player, Estate> PlayerBoughtEstate;
     public static UnityAction<Player, Estate> PlayerUpgradedEstate;
-    public static UnityAction<Player, Player, float> PlayerPayedTaxesToPlayer;
-    public static UnityAction<Player, float, float> PlayerBalanceChanged;//player, value, currentBalance
+    public static UnityAction<Player, Player, float> BalanceTransfered;
+    public static UnityAction<Player, float> PlayerBalanceAdded;
+    public static UnityAction<Player, float> PlayerBalanceWidthdrawn;
     public static UnityAction<Player, float> PlayerBalanceIsNegative;//current balance
     public static UnityAction<Player, bool> PlayerFieldCellInteractionEnded;//player, next turn
     public static UnityAction<Player> NewTurn;

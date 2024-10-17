@@ -13,6 +13,7 @@ public class EstateFieldCell : FieldCell
     {
         EstateData estateData = GamePropertiesController.Instance.GameProperties.Estates.Find(x => x.Name == _name);
          _estate = new Estate(estateData.Name, estateData.BaseQuantity, this);
+        EstatesController.Instance.Estates.Add(_estate);
         _buildingsSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
     }
 
@@ -28,16 +29,12 @@ public class EstateFieldCell : FieldCell
         else if (player.Team != _estate.Owner.Team)
         {
             float taxValue = Mathf.RoundToInt(_estate.CurrentQuantity * _estate.TaxesCoef);
-            if (_estate.OlympBonusApplied) 
+            if (_estate.OlympBonusApplied)
             {
                 taxValue = Mathf.RoundToInt(taxValue * OlympController.Instance.CurrentOlympBonus);
             }
 
-                player.Balance -= taxValue;
-                _estate.Owner.Balance += taxValue;
-
-
-            GameEvents.PlayerPayedTaxesToPlayer?.Invoke(player, _estate.Owner, taxValue);
+            BalancesController.Instance.Transferbalance(player, _estate.Owner, taxValue);
         }
     }
 

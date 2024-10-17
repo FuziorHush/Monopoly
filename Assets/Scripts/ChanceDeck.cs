@@ -50,13 +50,13 @@ public class ChanceDeck : CardDeck
         }
 
         if (willPay > 0) {
-            _targetPlayer.Balance -= willPay;
+            BalancesController.Instance.WidthdrawBalance(_targetPlayer, willPay);
         }
     }
 
     private void Action3()
     {
-        _targetPlayer.Balance -= 150;
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 150f);
     }
 
     private void Action4()
@@ -66,7 +66,7 @@ public class ChanceDeck : CardDeck
 
     private void Action5()
     {
-        _targetPlayer.Balance -= 15;
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 15f);
     }
 
     private void Action6()
@@ -76,22 +76,22 @@ public class ChanceDeck : CardDeck
 
     private void Action7()
     {
-        _targetPlayer.Balance += 100;
+        BalancesController.Instance.AddBalance(_targetPlayer, 100f);
     }
 
     private void Action8()
     {
-        _targetPlayer.GOJHas++;
+        JailController.Instance.GiveGOJ(_targetPlayer);
     }
 
     private void Action9()
     {
-        _targetPlayer.Balance += 150;
+        BalancesController.Instance.AddBalance(_targetPlayer, 150f);
     }
 
     private void Action10()
     {
-        _targetPlayer.Balance += 50;
+        BalancesController.Instance.AddBalance(_targetPlayer, 50f);
     }
 
     private void Action11()
@@ -116,7 +116,7 @@ public class ChanceDeck : CardDeck
 
         if (willPay > 0)
         {
-            _targetPlayer.Balance -= willPay;
+            BalancesController.Instance.WidthdrawBalance(_targetPlayer, willPay);
         }
     }
 
@@ -128,7 +128,7 @@ public class ChanceDeck : CardDeck
 
     private void Action14()
     {
-        _targetPlayer.Balance -= 20;
+        BalancesController.Instance.WidthdrawBalance(_targetPlayer, 20f);
     }
 
     private void Action15()

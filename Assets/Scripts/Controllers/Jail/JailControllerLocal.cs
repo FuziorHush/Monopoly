@@ -2,21 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JailController : MonoSingleton<JailController>
+public class JailControllerLocal : JailController
 {
-    private List<JailedPlayer> _jailedPlayers = new List<JailedPlayer>();
-
-    protected override void Awake()
+    public override void SendPlayerToJail(Player player, int turns)
     {
-        base.Awake();
-    }
-
-    public void SendPlayerToJail(Player player, int turns) {
         _jailedPlayers.Add(new JailedPlayer(player, turns));
         GameEvents.PlayerSentToJail?.Invoke(player);
     }
 
-    public bool CheckJail(Player player) 
+    public override bool CheckJail(Player player)
     {
         JailedPlayer jailedPlayer = _jailedPlayers.Find(x => x.Player == player);
         if (jailedPlayer != null)
@@ -33,20 +27,25 @@ public class JailController : MonoSingleton<JailController>
                 return true;
             }
         }
-        else {
+        else
+        {
             return false;
         }
     }
 
-    private class JailedPlayer {
+    public override void GiveGOJ(Player player)
+    {
+        player.GOJHas++;
+    }
 
-        public Player Player;
-        public int TurnsLeft;
-
-        public JailedPlayer(Player player, int turns)
+    public override void UseGOJ(Player player)
+    {
+        JailedPlayer jailedPlayer = _jailedPlayers.Find(x => x.Player == player);
+        if (jailedPlayer != null)
         {
-            Player = player;
-            TurnsLeft = turns;
+            player.GOJHas--;
+            _jailedPlayers.Remove(jailedPlayer);
+            GameEvents.PlayerFreedFromJail?.Invoke(jailedPlayer.Player);
         }
     }
 }

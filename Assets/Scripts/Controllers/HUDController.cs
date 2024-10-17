@@ -32,7 +32,8 @@ public class HUDController : MonoSingleton<HUDController>
         GameEvents.MoveAnimationStarted += OnAnimationStarted;
         GameEvents.MoveAnimationEnded += OnAnimationEnded;
         GameEvents.PlayerCreated += OnPlayerCreated;
-        GameEvents.PlayerBalanceChanged += OnPlayerBalanceChanged;
+        GameEvents.PlayerBalanceAdded += OnPlayerBalanceAdded;
+        GameEvents.PlayerBalanceWidthdrawn += OnPlayerBalanceWidthdrawn;
         GameEvents.NewTurn += OnNewTurn;
         GameEvents.MatchStarted += OnMatchStarted;
         GameEvents.CardTriggered += OnCardTriggered;
@@ -86,13 +87,29 @@ public class HUDController : MonoSingleton<HUDController>
         _balanceTexts.Add(text);
     }
 
-    private void OnPlayerBalanceChanged(Player player, float delta, float balance)
+    private void OnPlayerBalanceAdded(Player player, float delta)
     {
-        _balanceTexts[player.Number].text = player.Name + " " + balance.ToString() + "$";
+        _balanceTexts[player.Number].text = player.Name + " " + player.Balance.ToString() + "$";
 
         if (GameFlowController.Instance.PlayerWhoTurn == player)
         {
-            if (balance >= 0 && balance - delta < 0)
+            if (player.Balance >= 0)
+            {
+                if (GameFlowController.Instance.DicesActive)
+                    _tossDices.interactable = true;
+
+                _newTurn.interactable = true;
+            }
+        }
+    }
+
+    private void OnPlayerBalanceWidthdrawn(Player player, float delta)
+    {
+        _balanceTexts[player.Number].text = player.Name + " " + player.Balance.ToString() + "$";
+
+        if (GameFlowController.Instance.PlayerWhoTurn == player)
+        {
+            if (player.Balance >= 0)
             {
                 if (GameFlowController.Instance.DicesActive)
                     _tossDices.interactable = true;

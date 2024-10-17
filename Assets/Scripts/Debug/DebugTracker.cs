@@ -11,7 +11,7 @@ namespace GameDebug
             GameEvents.PlayerMoved += OnPlayerMoved;
             GameEvents.PlayerBoughtEstate += OnPlayerBoughtEstate;
             GameEvents.PlayerUpgradedEstate += OnPlayerUpgradedEstate;
-            GameEvents.PlayerPayedTaxesToPlayer += OnPlayerPayedTaxesToPlayer;
+            GameEvents.BalanceTransfered += OnPlayerPayedEsateBill;
             GameEvents.PlayerSentToJail += OnPlayerSentToJail;
             GameEvents.PlayerFreedFromJail += OnPlayerFreedFromJail;
             GameEvents.CardTriggered += OnCardTriggered;
@@ -31,7 +31,7 @@ namespace GameDebug
             DevConsoleBehaviour.Instance.Log($"{player.Name} upgraded {estate.Name} (lvl{estate.Level})");
         }
 
-        private void OnPlayerPayedTaxesToPlayer(Player player1, Player player2, float amount)
+        private void OnPlayerPayedEsateBill(Player player1, Player player2, float amount)
         {
             DevConsoleBehaviour.Instance.Log($"{player1.Name} paid {player2.Name} {amount}$");
         }

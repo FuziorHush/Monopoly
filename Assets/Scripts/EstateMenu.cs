@@ -15,10 +15,6 @@ public class EstateMenu : MonoSingleton<EstateMenu>
 
     public bool MenuIsOpen { get; private set; }
 
-    private Player _targetPlayer;
-    private Estate _targetEstate;
-    private float[] _prices;
-
     protected override void Awake()
     {
         base.Awake();
@@ -26,7 +22,7 @@ public class EstateMenu : MonoSingleton<EstateMenu>
         for (int i = 1; i < 6; i++)
         {
             int cl = i;
-            _buyButtons[i-1].onClick.AddListener(delegate { Purchase(cl); });
+            _buyButtons[i-1].onClick.AddListener(delegate {EstatesController.Instance.Purchase(cl); });
         }
         _dontBuyButton.onClick.AddListener(CloseMenu);
     }
@@ -39,41 +35,27 @@ public class EstateMenu : MonoSingleton<EstateMenu>
     public void Open(Player player, Estate estate)
     {
         _windowGameObject.SetActive(true);
-
-        _targetPlayer = player;
-        _targetEstate = estate;
-        _prices = new float[5];
-        float quantity = _targetEstate.BaseQuantity;
+        float[] prices = new float[5];
+        float quantity = estate.BaseQuantity;
 
         _estateName.text = estate.Name;
         for (int i = 0; i < estate.Level; i++)
         {
             _buyButtons[i].interactable = false;
             _buyButtonsTexts[i].text = "приобретено";
-            _prices[i] = 0;
+            prices[i] = 0;
         }
         for (int i = estate.Level; i < 5; i++)
         {
-            _buyButtons[i].interactable = _targetPlayer.Balance >= quantity;
+            _buyButtons[i].interactable = player.Balance >= quantity;
 
             _buyButtonsTexts[i].text = quantity.ToString();
-            _prices[i] = quantity;
-            quantity += _targetEstate.BaseQuantity;
+            prices[i] = quantity;
+            quantity += estate.BaseQuantity;
         }
 
+        EstatesController.Instance.SetTarget(player, estate, prices);
         MenuIsOpen = true;
-    }
-
-    private void Purchase(int lvl) {
-        if (_targetEstate.Owner == _targetPlayer)
-        {
-            UpgradeEstate(lvl);
-        }
-        else {
-            BuyEstate(lvl);
-        }
-        _targetEstate.CellLink.UpdateBuildingSprite();
-        CloseMenu();
     }
 
     public void CloseMenu() 
@@ -85,25 +67,5 @@ public class EstateMenu : MonoSingleton<EstateMenu>
         _windowGameObject.SetActive(false);
 
         MenuIsOpen = false;
-    }
-
-    private void BuyEstate(int lvl) 
-    {
-        _targetPlayer.Balance -= _prices[lvl-1];
-        _targetPlayer.EstatesOwn.Add(_targetEstate);
-        _targetEstate.Owner = _targetPlayer;
-        _targetEstate.CurrentQuantity = _prices[lvl-1];
-        _targetEstate.Level = lvl;
-
-        GameEvents.PlayerBoughtEstate?.Invoke(_targetPlayer, _targetEstate);
-    }
-
-    private void UpgradeEstate(int lvl) 
-    {
-        _targetPlayer.Balance -= _prices[lvl - 1];
-        _targetEstate.CurrentQuantity += _prices[lvl - 1];
-        _targetEstate.Level = lvl;
-
-        GameEvents.PlayerUpgradedEstate?.Invoke(_targetPlayer, _targetEstate);
     }
 }
