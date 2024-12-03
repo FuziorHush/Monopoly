@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class BankController : MonoSingleton<BankController>
+public abstract class BankController : MonoSingleton<BankController>
 {
     protected List<Player> _players;
 
@@ -11,6 +9,8 @@ public class BankController : MonoSingleton<BankController>
         base.Awake();
         GameEvents.ControllersCreated += Init;
     }
+
+    public abstract void HandOverMoney(Player playerSender, Player playerReciever, float amount);
 
     private void Init()
     {

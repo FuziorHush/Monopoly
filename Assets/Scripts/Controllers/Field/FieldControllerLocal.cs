@@ -8,7 +8,7 @@ public class FieldControllerLocal : FieldController
     public override Transform CreatePlayerAvatar(int number, Photon.Realtime.Player networkPlayer)
     {
         Vector3 spawnPos = new Vector3(_startCellPos.x + _fieldData._playersPositionIndents[number].x, _startCellPos.y + _fieldData._playersPositionIndents[number].y, 0);
-        Transform playerAvatar = _fieldData._playerAvatarBuilder.CreateAvatar(number, number).transform;
+        Transform playerAvatar = _fieldData._playerAvatarBuilder.CreateAvatar(LocalGameData.Instance.Players[number].Icon, LocalGameData.Instance.Players[number].AvatarColor).transform;
         playerAvatar.position = spawnPos;
         playerAvatar.SetParent(_fieldData._playerAvatarsParent);
         return playerAvatar;
@@ -41,7 +41,7 @@ public class FieldControllerLocal : FieldController
         {
             targetCellId -= _cellsNum;
             player.Loops++;
-            BalancesController.Instance.AddBalance(player, GamePropertiesController.Instance.GameProperties.LoopPayment);
+            BalancesController.Instance.AddBalance(player, _loopPayment);
         }
         _targetCell = _fieldData._cells[targetCellId];
         player.CellOn = targetCellId;

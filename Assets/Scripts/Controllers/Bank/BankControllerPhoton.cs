@@ -7,6 +7,14 @@ using Photon.Realtime;
 
 public class BankControllerPhoton : BankController, IOnEventCallback
 {
+    public override void HandOverMoney(Player playerSender, Player playerReciever, float amount)
+    {
+        if (playerSender.Balance >= amount)
+        {
+            BalancesController.Instance.Transferbalance(playerSender, playerReciever, amount);
+        }
+    }
+
     private void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
@@ -19,11 +27,6 @@ public class BankControllerPhoton : BankController, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
-        if (photonEvent.Code == (byte)PhotonEventCodes.PlayerBalanceAdded)
-        {
-            object[] data = (object[])photonEvent.CustomData;
-            Player player = _players[(byte)data[0]];
-            float amount = (float)data[1];
-        }
+
     }
 }

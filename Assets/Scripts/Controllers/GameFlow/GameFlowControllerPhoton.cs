@@ -22,16 +22,34 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
     private void CreatePlayer_All() 
     {
         int playersCount = Players.Count;
+        print(playersCount);
         Photon.Realtime.Player networkPlayer = PhotonNetwork.PlayerList[playersCount];
         Transform playerAvatar = FieldController.Instance.CreatePlayerAvatar(playersCount, networkPlayer);
         Player player = new Player(PhotonNetwork.PlayerList[playersCount].NickName, playersCount, playerAvatar, StaticData.Instance.AvatarColors[(int)networkPlayer.CustomProperties["Color"]]);
         player.NetworkPlayer = networkPlayer;
+        player.Balance = GamePropertiesController.GameProperties.StartPlayerBalance;
 
         if (networkPlayer == PhotonNetwork.LocalPlayer)
             ControllerOwner = player;
 
         Players.Add(player);
+        AddPlayerToTeam(player, (int)networkPlayer.CustomProperties["Team"] + "");
         GameEvents.PlayerCreated?.Invoke(player);
+    }
+
+    private void AddPlayerToTeam(Player player, string teamName)
+    {
+        Team team = Teams.Find(x => x.Name == teamName);
+        if (team == null)
+        {
+            Team newTeam = new Team(teamName);
+            Teams.Add(newTeam);
+            newTeam.AddPlayer(player);
+        }
+        else
+        {
+            team.AddPlayer(player);
+        }
     }
 
     public override void StartMatch()
@@ -51,10 +69,12 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
         CurrentPlayerCanUseTrain = false;
         DontInteractWithNextCell = false;
 
-        Vector2Int dicesResult = new Vector2Int(Random.Range(1, 7), Random.Range(1, 7));
+        byte diceResult1 = (byte)Random.Range(1, 7);
+        byte diceResult2 = (byte)Random.Range(1, 7);
+        _dicesResult = new Vector2Int(diceResult1, diceResult2);
         DicesActive = false;
 
-        object[] content = new object[1] { dicesResult };
+        object[] content = new object[2] { diceResult1, diceResult2 };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.DicesTossed, content, raiseEventOptions, SendOptions.SendReliable);
 
@@ -62,19 +82,21 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
         {
             if (_diceDoublesInTurn == 3)
             {
-                //JailController.Instance.SendPlayerToJail(ControllerOwner, 3);
+                JailController.Instance.SendPlayerToJail(ControllerOwner);
                 _diceDoublesInTurn = 0;
-                //NextTurn();
+                NextTurn();
                 return;
             }
             _diceDoublesInTurn++;
             DicesActive = true;
+
+            Instantiate(GameFieldStaticData.Instance._doubleDicesEffect, GameFieldStaticData.Instance._doubleDicesEffectSpawnPoint.position, Quaternion.identity);
         }
         else
         {
             _diceDoublesInTurn = 0;
         }
-        //FieldController.Instance.GoForward(PlayerWhoTurn, _dicesResult.x + _dicesResult.y);
+        FieldController.Instance.GoForward(PlayerWhoTurn, _dicesResult.x + _dicesResult.y);
     }
 
     private void ShowDicesResult_All(Vector2Int dicesResult)
@@ -92,6 +114,12 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
 
     public override void NextTurn()
     {
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+        PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.NextTurn, null, raiseEventOptions, SendOptions.SendReliable);
+    }
+
+    private void NextTurn_All() 
+    {
         CurrentPlayerCanUseTrain = false;
 
         _playerWhoTurnNum++;
@@ -101,7 +129,19 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
         }
         PlayerWhoTurn = Players[_playerWhoTurnNum];
 
-        DicesActive = !JailController.Instance.CheckJail(PlayerWhoTurn);
+        if (JailController.Instance.IsPlayerInJail(PlayerWhoTurn))
+        {
+            DicesActive = false;
+            JailController.Instance.TurnJail(PlayerWhoTurn);
+            if (!JailController.Instance.IsPlayerInJail(PlayerWhoTurn))
+            {
+                DicesActive = true;
+            }
+        }
+        else
+        {
+            DicesActive = true;
+        }
 
         GameEvents.NewTurn?.Invoke(PlayerWhoTurn);
     }
@@ -137,6 +177,13 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
 
     protected override void RemovePlayer(Player player)
     {
+        object[] data = new object[1] { (byte)Players.IndexOf(player) };
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+        PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerRemoved, data, raiseEventOptions, SendOptions.SendReliable);
+    }
+
+    private void RemovePlayer_All(Player player)
+    {
         for (int i = 0; i < player.EstatesOwn.Count; i++)
         {
             player.EstatesOwn[i].ResetEstate();
@@ -159,7 +206,6 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
     private IEnumerator CloseRoom()
     {
         yield return new WaitForSeconds(2);
-        //destroyRoom
     }
 
     private void OnEnable()
@@ -185,8 +231,19 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
         else if (photonEvent.Code == (byte)PhotonEventCodes.DicesTossed)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Vector2Int dicesResult = (Vector2Int)data[0];
-            ShowDicesResult_All(dicesResult);
+            byte diceResult1 = (byte)data[0];
+            byte diceResult2 = (byte)data[1];
+            ShowDicesResult_All(new Vector2Int(diceResult1, diceResult2));
+        }
+        else if (photonEvent.Code == (byte)PhotonEventCodes.NextTurn)
+        {
+            NextTurn_All();
+        }
+        else if (photonEvent.Code == (byte)PhotonEventCodes.PlayerRemoved)
+        {
+            object[] data = (object[])photonEvent.CustomData;
+            Player player = Players[(byte)data[0]];
+            RemovePlayer_All(player);
         }
     }
 }

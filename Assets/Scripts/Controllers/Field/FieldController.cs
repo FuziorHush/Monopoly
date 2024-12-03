@@ -1,14 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using DG.Tweening;
 
 public abstract class FieldController : MonoSingleton<FieldController>
 {
+    protected List<Player> _players;
+
     protected GameFieldStaticData _fieldData;
     protected Vector3 _startCellPos;
     protected int _cellsNum;
+    protected float _loopPayment;
 
     protected Player _actingPlayer;
     protected FieldCell _targetCell;
@@ -24,11 +24,14 @@ public abstract class FieldController : MonoSingleton<FieldController>
         _fieldData = GameFieldStaticData.Instance;
         _startCellPos = _fieldData._cells[0].transform.position;
         _cellsNum = _fieldData._cells.Length;
+        _loopPayment = GamePropertiesController.GameProperties.LoopPayment;
         for (int i = 0; i < _fieldData._cells.Length; i++)
         {
             _fieldData._cells[i].Init();
             _fieldData._cells[i].CellID = i;
         }
+
+        _players = GameFlowController.Instance.Players;
     }
 
     public abstract Transform CreatePlayerAvatar(int number, Photon.Realtime.Player networkPlayer = null);

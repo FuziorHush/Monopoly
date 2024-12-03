@@ -90,7 +90,7 @@ namespace GameDebug
         public void Log(string message)
         {
             _messages.Add($"{message}\n");
-            if (_messages.Count > 15)
+            if (_messages.Count > 80)
             {
                 _messages.RemoveAt(0);
             }

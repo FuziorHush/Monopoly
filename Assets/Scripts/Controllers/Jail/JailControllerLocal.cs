@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class JailControllerLocal : JailController
 {
-    public override void SendPlayerToJail(Player player, int turns)
+    public override void SendPlayerToJail(Player player)
     {
-        _jailedPlayers.Add(new JailedPlayer(player, turns));
+        _jailedPlayers.Add(new JailedPlayer(player, _jailTurns));
         GameEvents.PlayerSentToJail?.Invoke(player);
     }
 
-    public override bool CheckJail(Player player)
+    public override void TurnJail(Player player)
     {
         JailedPlayer jailedPlayer = _jailedPlayers.Find(x => x.Player == player);
         if (jailedPlayer != null)
@@ -20,16 +20,7 @@ public class JailControllerLocal : JailController
             {
                 _jailedPlayers.Remove(jailedPlayer);
                 GameEvents.PlayerFreedFromJail?.Invoke(jailedPlayer.Player);
-                return false;
             }
-            else
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return false;
         }
     }
 

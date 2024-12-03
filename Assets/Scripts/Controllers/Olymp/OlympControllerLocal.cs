@@ -10,9 +10,11 @@ public class OlympControllerLocal : OlympController
         if (_estateWithBonusApplied != null)
         {
             _estateWithBonusApplied.OlympBonusApplied = false;
+            _estateWithBonusApplied.CellLink.DisableOlympEffect();
         }
         _estateWithBonusApplied = estate;
         estate.OlympBonusApplied = true;
         CurrentOlympBonus *= _olympBonusMuiltiply;
+        _estateWithBonusApplied.CellLink.EnableOlympEffect();
     }
 }

@@ -14,4 +14,6 @@ public class GameFieldStaticData : MonoSingleton<GameFieldStaticData>
     public GameObject _playerAvatarPrefab;
     public Transform _playerAvatarsParent;
     public PlayerAvatarBuilder _playerAvatarBuilder;
+    public GameObject _doubleDicesEffect;
+    public Transform _doubleDicesEffectSpawnPoint;
 }

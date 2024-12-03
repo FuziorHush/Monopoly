@@ -9,14 +9,22 @@ public abstract class OlympController : MonoSingleton<OlympController>
     protected Estate _estateWithBonusApplied;
 
     //client
-    protected float _olympBonusMuiltiply = 1.1f;//TODO: take from properties
+    protected float _olympBonusMuiltiply = 1.1f;
     public bool CanApplyOlympBonus { get; protected set; }
+
+    protected List<Estate> _estates;
 
     protected override void Awake()
     {
         base.Awake();
         CurrentOlympBonus = _olympBonusMuiltiply;
+        GameEvents.ControllersCreated += Init;
         GameEvents.NewTurn += OnNextTurn;
+    }
+
+    private void Init() {
+        _estates = EstatesController.Instance.Estates;
+        _olympBonusMuiltiply = GamePropertiesController.GameProperties.OlympMult;
     }
 
     public void ActivateBonus() 

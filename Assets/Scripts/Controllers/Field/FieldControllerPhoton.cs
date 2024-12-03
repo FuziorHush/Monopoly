@@ -37,7 +37,9 @@ public class FieldControllerPhoton : FieldController, IOnEventCallback
 
     public override void GoForward(Player player, int steps)
     {
-        object[] data = new object[2] { player, steps };
+        object[] data = new object[2];
+        data[0] = (byte)_players.IndexOf(player);
+        data[1] = (byte)steps;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerGoForward, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -53,7 +55,7 @@ public class FieldControllerPhoton : FieldController, IOnEventCallback
             player.Loops++;
 
             if(player.NetworkPlayer == PhotonNetwork.LocalPlayer)//both methods GoForward_All and AddBalance call to all players
-                BalancesController.Instance.AddBalance(player, GamePropertiesController.Instance.GameProperties.LoopPayment);
+                BalancesController.Instance.AddBalance(player, _loopPayment);
         }
         _targetCell = _fieldData._cells[targetCellId];
         player.CellOn = targetCellId;
@@ -63,7 +65,9 @@ public class FieldControllerPhoton : FieldController, IOnEventCallback
 
     public override void GoBackward(Player player, int steps)
     {
-        object[] data = new object[2] { player, steps };
+        object[] data = new object[2];
+        data[0] = (byte)_players.IndexOf(player);
+        data[1] = (byte)steps;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerGoBackward, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -118,15 +122,15 @@ public class FieldControllerPhoton : FieldController, IOnEventCallback
         if (photonEvent.Code == (byte)PhotonEventCodes.PlayerGoForward)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Player player = (Player)data[0];
-            int steps = (int)data[1];
+            Player player = _players[(byte)data[0]];
+            byte steps = (byte)data[1];
             GoForward_All(player, steps);
         }
         else if (photonEvent.Code == (byte)PhotonEventCodes.PlayerGoBackward)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Player player = (Player)data[0];
-            int steps = (int)data[1];
+            Player player = _players[(byte)data[0]];
+            byte steps = (byte)data[1];
             GoBackward_All(player, steps);
         }
     }

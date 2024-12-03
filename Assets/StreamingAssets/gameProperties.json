@@ -1,6 +1,11 @@
 {
+  "PropertiesVersion": "gp02",
+
   "StartPlayerBalance": 500,
   "LoopPayment": 200,
+  "TaxesAmount": 200,
+  "OlympMult": 1.1,
+  "JailTurns": 3,
 
   "Estates": [
     {

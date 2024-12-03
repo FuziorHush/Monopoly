@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public abstract class DecksController : MonoSingleton<DecksController>
 {
+    protected List<Player> _players;
+
     protected ChanceDeck _chanceDeck;
     protected LuckDeck _luckDeck;
 
@@ -13,6 +13,12 @@ public abstract class DecksController : MonoSingleton<DecksController>
 
         _chanceDeck = gameObject.AddComponent<ChanceDeck>();
         _luckDeck = gameObject.AddComponent<LuckDeck>();
+        GameEvents.ControllersCreated += Init;
+    }
+
+    private void Init()
+    {
+        _players = GameFlowController.Instance.Players;
     }
 
     public abstract void TriggerChanceDeck(Player player);

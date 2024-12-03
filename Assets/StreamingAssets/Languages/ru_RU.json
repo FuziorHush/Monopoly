@@ -1,6 +1,96 @@
 ﻿{
   "items": [
     {
+      "key": "hud_toss",
+      "value": "Бросить кубики"
+    },
+    {
+      "key": "hud_newturn",
+      "value": "Закончить ход"
+    },
+    {
+      "key": "hud_getfree",
+      "value": "Выйти из тюрьмы"
+    },
+
+    {
+      "key": "cellinfo_empty",
+      "value": "Пустая клетка"
+    },
+    {
+      "key": "cellinfo_start",
+      "value": "Старт\nПройдя здесь вы получите "
+    },
+    {
+      "key": "cellinfo_estate_noowner",
+      "value": "Нет владельца"
+    },
+    {
+      "key": "cellinfo_estate_owner",
+      "value": "Вледелец: "
+    },
+    {
+      "key": "cellinfo_estate_youwillpay",
+      "value": "Попав на эту клетку вы заплатите "
+    },
+    {
+      "key": "cellinfo_estate_pledged",
+      "value": "Под залогом"
+    },
+    {
+      "key": "cellinfo_chance",
+      "value": "Шанс\nВозьмите случайную карту из колоды \"шанс\""
+    },
+    {
+      "key": "cellinfo_luck",
+      "value": "Удача\nВозьмите случайную карту из колоды \"удача\""
+    },
+    {
+      "key": "cellinfo_train",
+      "value": "Поезд\nПереместитесь на выбранную клетку \"поезд\""
+    },
+    {
+      "key": "cellinfo_prison",
+      "value": "Тюрьма\n"
+    },
+    {
+      "key": "cellinfo_prison_empty",
+      "value": "В тюрьме нет игроков"
+    },
+    {
+      "key": "cellinfo_prison_turns",
+      "value": "хода(ов)"
+    },
+    {
+      "key": "cellinfo_bank",
+      "value": "Банк\nЗдесь можно передавать деньги товарищам по команде"
+    },
+    {
+      "key": "cellinfo_taxes",
+      "value": "Налоги\nЗаплатите налоги в размере "
+    },
+    {
+      "key": "cellinfo_olymp",
+      "value": "Олимпийские игры\nВаша выбранная недвижемость получит бонус к аренде "
+    },
+
+
+    {
+      "key": "estatesmenu_bought",
+      "value": "приобретено"
+    },
+
+    {
+      "key": "handovermenu_transfer",
+      "value": "Передать деньги союзнику"
+    },
+    {
+      "key": "handovermenu_noallies",
+      "value": "У вас нет союзников, которым можно передать деньги"
+    },
+
+
+    {
       "key": "card_chance0",
       "value": "Отправляйтесь на олимпийские игры"
     },

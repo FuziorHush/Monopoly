@@ -9,7 +9,7 @@ public class OlympControllerPhoton : OlympController, IOnEventCallback
 {
     public override void SetBonusToEstate(Estate estate)
     {
-        object[] data = new object[1] { estate };
+        object[] data = new object[1] { (byte)_estates.IndexOf(estate) };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.EstateBonusApplied, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -19,10 +19,12 @@ public class OlympControllerPhoton : OlympController, IOnEventCallback
         if (_estateWithBonusApplied != null)
         {
             _estateWithBonusApplied.OlympBonusApplied = false;
+            _estateWithBonusApplied.CellLink.DisableOlympEffect();
         }
         _estateWithBonusApplied = estate;
         estate.OlympBonusApplied = true;
         CurrentOlympBonus *= _olympBonusMuiltiply;
+        _estateWithBonusApplied.CellLink.EnableOlympEffect();
     }
 
     private void OnEnable()
@@ -40,7 +42,7 @@ public class OlympControllerPhoton : OlympController, IOnEventCallback
         if (photonEvent.Code == (byte)PhotonEventCodes.EstateBonusApplied)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Estate estate = (Estate)data[0];
+            Estate estate = _estates[(byte)data[0]];
             SetBonusToEstate_All(estate);
         }
     }

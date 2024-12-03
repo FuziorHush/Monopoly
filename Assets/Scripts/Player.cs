@@ -11,11 +11,13 @@ public class Player
         EstatesOwn = new List<Estate>();
         AvatarTransform = avatarTransform;
         AvatarColor = avatarColor;
+        AvatarColorHex = ColorUtility.ToHtmlStringRGBA(avatarColor.FrontColor);
     }
 
     public string Name { get; private set; }
     public int Number { get; private set; }
     public AvatarColor AvatarColor { get; private set; }
+    public string AvatarColorHex { get; private set; }
 
     private float _balance;
     public float Balance {

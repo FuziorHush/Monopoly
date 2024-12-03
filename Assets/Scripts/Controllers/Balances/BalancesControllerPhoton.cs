@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -9,7 +6,9 @@ public class BalancesControllerPhoton : BalancesController, IOnEventCallback
 {
     public override void AddBalance(Player player, float amount)
     {
-        object[] data = new object[2] { player, amount };
+        object[] data = new object[2];
+        data[0] = (byte)_players.IndexOf(player);
+        data[1] = amount;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerBalanceAdded, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -23,7 +22,7 @@ public class BalancesControllerPhoton : BalancesController, IOnEventCallback
     public override void WidthdrawBalance(Player player, float amount)
     {
         object[] data = new object[2];
-        data[0] = _players.IndexOf(player);
+        data[0] = (byte)_players.IndexOf(player);
         data[1] = amount;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerBalanceWidthdrawn, data, raiseEventOptions, SendOptions.SendReliable);
@@ -38,8 +37,8 @@ public class BalancesControllerPhoton : BalancesController, IOnEventCallback
     public override void Transferbalance(Player playerSender, Player playerReceiver, float amount)
     {
         object[] data = new object[3];
-        data[0] = _players.IndexOf(playerSender);
-        data[1] = _players.IndexOf(playerReceiver);
+        data[0] = (byte)_players.IndexOf(playerSender);
+        data[1] = (byte)_players.IndexOf(playerReceiver);
         data[2] = amount;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.BalanceTransfered, data, raiseEventOptions, SendOptions.SendReliable);

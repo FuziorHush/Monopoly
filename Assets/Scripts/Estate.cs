@@ -33,6 +33,7 @@ public class Estate
 
         GameEvents.EstateReseted?.Invoke(this);
 
-            CellLink.UpdateBuildingSprite();
+        CellLink.UpdateBuildingSprite();
+        CellLink.DisablePledgedEffect();
     }
 }

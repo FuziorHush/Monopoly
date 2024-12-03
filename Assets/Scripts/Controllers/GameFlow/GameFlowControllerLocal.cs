@@ -1,19 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameFlowControllerLocal : GameFlowController
 {
     public override void CreatePlayers()
     {
-       // for(int i = 0; i< )
+        float _startBalance = GamePropertiesController.GameProperties.StartPlayerBalance;
+        for (int i = 0; i < LocalGameData.Instance.Players.Count; i++) 
+        {
+            int playersCount = Players.Count;
+            Transform playerAvatar = FieldController.Instance.CreatePlayerAvatar(playersCount);
+            Player player = new Player(LocalGameData.Instance.Players[i].Name, playersCount, playerAvatar, LocalGameData.Instance.Players[i].AvatarColor);
+            player.Balance = _startBalance;
 
-        int playersCount = Players.Count;
-        Transform playerAvatar = FieldController.Instance.CreatePlayerAvatar(playersCount);
-        Player player = new Player("Player" + (playersCount + 1), playersCount, playerAvatar, StaticData.Instance.AvatarColors[playersCount]);
+            Players.Add(player);
+            AddPlayerToTeam(player, LocalGameData.Instance.Players[i].Team.ToString());
+            GameEvents.PlayerCreated?.Invoke(player);
+        }
+        Destroy(LocalGameData.Instance.gameObject);
+    }
 
-        Players.Add(player);
-        GameEvents.PlayerCreated?.Invoke(player);
+    private void AddPlayerToTeam(Player player, string teamName)
+    {
+        Team team = Teams.Find(x => x.Name == teamName);
+        if (team == null)
+        {
+            Team newTeam = new Team(teamName);
+            Teams.Add(newTeam);
+            newTeam.AddPlayer(player);
+        }
+        else
+        {
+            team.AddPlayer(player);
+        }
     }
 
     public override void StartMatch()
@@ -33,13 +54,15 @@ public class GameFlowControllerLocal : GameFlowController
         {
             if (_diceDoublesInTurn == 3)
             {
-                JailController.Instance.SendPlayerToJail(PlayerWhoTurn, 3);
+                JailController.Instance.SendPlayerToJail(PlayerWhoTurn);
                 _diceDoublesInTurn = 0;
                 NextTurn();
                 return;
             }
             _diceDoublesInTurn++;
             DicesActive = true;
+
+            Instantiate(GameFieldStaticData.Instance._doubleDicesEffect, GameFieldStaticData.Instance._doubleDicesEffectSpawnPoint.position, Quaternion.identity);
         }
         else
         {
@@ -73,7 +96,19 @@ public class GameFlowControllerLocal : GameFlowController
         }
         PlayerWhoTurn = Players[_playerWhoTurnNum];
 
-        DicesActive = !JailController.Instance.CheckJail(PlayerWhoTurn);
+        if (JailController.Instance.IsPlayerInJail(PlayerWhoTurn))
+        {
+            DicesActive = false;
+            JailController.Instance.TurnJail(PlayerWhoTurn);
+            if (!JailController.Instance.IsPlayerInJail(PlayerWhoTurn))
+            {
+                DicesActive = true;
+            }
+        }
+        else
+        {
+            DicesActive = true;
+        }
 
         GameEvents.NewTurn?.Invoke(PlayerWhoTurn);
     }
@@ -82,6 +117,9 @@ public class GameFlowControllerLocal : GameFlowController
     {
         for (int i = 0; i < player.EstatesOwn.Count; i++)
         {
+            if (player.EstatesOwn[i].PledgedAmount > 0)
+                continue;
+
             balance += Mathf.RoundToInt((player.EstatesOwn[i].CurrentQuantity) / 2);
             if (balance >= 0)
             {
@@ -131,6 +169,6 @@ public class GameFlowControllerLocal : GameFlowController
     private IEnumerator CloseRoom()
     {
         yield return new WaitForSeconds(2);
-        //destroyRoom
+        SceneManager.LoadScene(1);
     }
 }

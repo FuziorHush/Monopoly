@@ -1,16 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class DecksControllerLocal : DecksController
 {
     public override void TriggerChanceDeck(Player player)
     {
-        _chanceDeck.TriggerRandomAction(player);
+        int triggeredId = _chanceDeck.TriggerRandomAction(player);
+        _chanceDeck.TranslateActionTrigger(triggeredId, player);
     }
 
     public override void TriggerLuckDeck(Player player)
     {
-        _luckDeck.TriggerRandomAction(player);
+        int triggeredId = _luckDeck.TriggerRandomAction(player);
+        _luckDeck.TranslateActionTrigger(triggeredId, player);
+
     }
 }

@@ -8,13 +8,17 @@ public class EstateFieldCell : FieldCell
     [SerializeField] private string _name;
     private Estate _estate;
     private SpriteRenderer _buildingsSprite;
+    private SpriteRenderer _olympBoostedEffect;
+    private SpriteRenderer _pledgedEffect;
 
     public override void Init()
     {
-        EstateData estateData = GamePropertiesController.Instance.GameProperties.Estates.Find(x => x.Name == _name);
+        EstateData estateData = GamePropertiesController.GameProperties.Estates.Find(x => x.Name == _name);
          _estate = new Estate(estateData.Name, estateData.BaseQuantity, this);
         EstatesController.Instance.Estates.Add(_estate);
         _buildingsSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        _olympBoostedEffect = transform.GetChild(1).GetChild(0).GetComponent<SpriteRenderer>();
+        _pledgedEffect = transform.GetChild(1).GetChild(1).GetComponent<SpriteRenderer>();
     }
 
     public override void Interact(Player player)
@@ -22,7 +26,7 @@ public class EstateFieldCell : FieldCell
         if (_estate.PledgedAmount > 0)
             return;
 
-        if (_estate.Owner == null)
+        if (_estate.Owner == null || _estate.Owner == player)
         {
             EstateMenu.Instance.Open(player, _estate);
         }
@@ -45,16 +49,27 @@ public class EstateFieldCell : FieldCell
 
     public override void Clicked(Player player)
     {
-        if (GameFlowController.Instance.PlayerWhoTurn.Balance < 0)
-        {
-            float pledge = Mathf.RoundToInt(_estate.CurrentQuantity / 2);
-            _estate.PledgedAmount = pledge;
-            GameFlowController.Instance.PlayerWhoTurn.Balance += pledge;
-        }
-        else if (OlympController.Instance.CanApplyOlympBonus && _estate.Owner == player)
-        {
-            OlympController.Instance.SetBonusToEstate(_estate);
-        }
+        EstatesController.Instance.EstateCellClicked(player, _estate);
+    }
+
+    public void EnableOlympEffect()
+    {
+        _olympBoostedEffect.color = new Color(1f, 1f, 1f, 0.5f);
+    }
+
+    public void EnablePledgedEffect()
+    {
+        _pledgedEffect.color = Color.white;
+    }
+
+    public void DisableOlympEffect()
+    {
+        _olympBoostedEffect.color = Color.clear;
+    }
+
+    public void DisablePledgedEffect()
+    {
+        _pledgedEffect.color = Color.clear;
     }
 
     public void UpdateBuildingSprite() {

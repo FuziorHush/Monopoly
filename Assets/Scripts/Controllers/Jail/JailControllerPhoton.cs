@@ -7,25 +7,24 @@ using Photon.Realtime;
 
 public class JailControllerPhoton : JailController, IOnEventCallback
 {
-    public override void SendPlayerToJail(Player player, int turns)
+    public override void SendPlayerToJail(Player player)
     {
-        object[] data = new object[2] { player, turns };
+        object[] data = new object[1] { (byte)_players.IndexOf(player)};
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerGoForward, data, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerSentToJail, data, raiseEventOptions, SendOptions.SendReliable);
     }
 
-    private void SendPlayerToJail_All(Player player, int turns)
+    private void SendPlayerToJail_All(Player player)
     {
-        _jailedPlayers.Add(new JailedPlayer(player, turns));
+        _jailedPlayers.Add(new JailedPlayer(player, _jailTurns));
         GameEvents.PlayerSentToJail?.Invoke(player);
     }
 
-    public override bool CheckJail(Player player)//TODO: make void
+    public override void TurnJail(Player player)//TODO: make void
     {
-        object[] data = new object[1] { player };
+        object[] data = new object[1] { (byte)_players.IndexOf(player) };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-        PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerGoForward, data, raiseEventOptions, SendOptions.SendReliable);
-        return true;
+        PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.CheckJail, data, raiseEventOptions, SendOptions.SendReliable);
     }
 
     private void CheckJail_All(Player player)
@@ -44,7 +43,7 @@ public class JailControllerPhoton : JailController, IOnEventCallback
 
     public override void GiveGOJ(Player player)
     {
-        object[] data = new object[1] { player };
+        object[] data = new object[1] { (byte)_players.IndexOf(player) };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerGotGOJ, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -56,7 +55,7 @@ public class JailControllerPhoton : JailController, IOnEventCallback
 
     public override void UseGOJ(Player player)
     {
-        object[] data = new object[1] { player };
+        object[] data = new object[1] { (byte)_players.IndexOf(player) };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.PlayerUsedGOJ, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -84,26 +83,25 @@ public class JailControllerPhoton : JailController, IOnEventCallback
         if (photonEvent.Code == (byte)PhotonEventCodes.PlayerSentToJail)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Player player = (Player)data[0];
-            int turns = (int)data[1];
-            SendPlayerToJail_All(player, turns);
+            Player player = _players[(byte)data[0]];
+            SendPlayerToJail_All(player);
         }
         else if (photonEvent.Code == (byte)PhotonEventCodes.CheckJail) 
         {
             object[] data = (object[])photonEvent.CustomData;
-            Player player = (Player)data[0];
+            Player player = _players[(byte)data[0]];
             CheckJail_All(player);
         }
         else if (photonEvent.Code == (byte)PhotonEventCodes.PlayerGotGOJ)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Player player = (Player)data[0];
+            Player player = _players[(byte)data[0]];
             GiveGOJ_All(player);
         }
         else if (photonEvent.Code == (byte)PhotonEventCodes.PlayerUsedGOJ)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Player player = (Player)data[0];
+            Player player = _players[(byte)data[0]];
             UseGOJ_All(player);
         }
     }

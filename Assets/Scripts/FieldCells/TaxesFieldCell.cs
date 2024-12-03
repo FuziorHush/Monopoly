@@ -1,12 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class TaxesFieldCell : FieldCell
 {
+    private float _taxesAmount;
+
+    public override void Init()
+    {
+        _taxesAmount = GamePropertiesController.GameProperties.TaxesAmount;
+    }
+
     public override void Interact(Player player)
     {
-
+        BalancesController.Instance.WidthdrawBalance(player, _taxesAmount);
     }
 
     protected override void ShowInfo()
