@@ -158,24 +158,9 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
         }
 
         RemovePlayer(player);
-
-        if (Teams.Count == 1)
-        {
-            GameEvents.MatchEnded?.Invoke(Teams[0]);
-            StartCoroutine(CloseRoom());
-        }
-        else if (Teams.Count == 0)
-        {
-            GameEvents.MatchEnded?.Invoke(null);
-            StartCoroutine(CloseRoom());
-        }
-        else
-        {
-            NextTurn();
-        }
     }
 
-    protected override void RemovePlayer(Player player)
+    public override void RemovePlayer(Player player)
     {
         object[] data = new object[1] { (byte)Players.IndexOf(player) };
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
@@ -201,11 +186,28 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
 
         Players.Remove(player);
         Destroy(player.AvatarTransform.gameObject);
+
+        if (Teams.Count == 1)
+        {
+            GameEvents.MatchEnded?.Invoke(Teams[0]);
+            StartCoroutine(EndGame());
+        }
+        else if (Teams.Count == 0)
+        {
+            GameEvents.MatchEnded?.Invoke(null);
+            StartCoroutine(EndGame());
+        }
+        else
+        {
+            if(PhotonNetwork.IsMasterClient)
+            NextTurn();
+        }
     }
 
-    private IEnumerator CloseRoom()
+    private IEnumerator EndGame()
     {
         yield return new WaitForSeconds(2);
+        PhotonNetwork.LeaveRoom();
     }
 
     private void OnEnable()

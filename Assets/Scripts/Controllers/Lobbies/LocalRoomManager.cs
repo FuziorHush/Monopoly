@@ -129,7 +129,7 @@ public class LocalRoomManager : MonoBehaviour
         }
         GamePropertiesController.GameProperties.StartPlayerBalance = startBalance;
 
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }
 
     public void SetPlayerIconInList(int spriteID)

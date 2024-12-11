@@ -131,7 +131,7 @@ public class RoomManagerPhoton : MonoBehaviourPunCallbacks
             }
             GamePropertiesController.GameProperties.StartPlayerBalance = startBalance;
             PhotonNetwork.CurrentRoom.IsVisible = false;
-            PhotonNetwork.LoadLevel(2);
+            PhotonNetwork.LoadLevel(3);
         }
     }
 

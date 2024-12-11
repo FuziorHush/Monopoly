@@ -128,24 +128,9 @@ public class GameFlowControllerLocal : GameFlowController
         }
 
         RemovePlayer(player);
-
-        if (Teams.Count == 1)
-        {
-            GameEvents.MatchEnded?.Invoke(Teams[0]);
-            StartCoroutine(CloseRoom());
-        }
-        else if (Teams.Count == 0)
-        {
-            GameEvents.MatchEnded?.Invoke(null);
-            StartCoroutine(CloseRoom());
-        }
-        else
-        {
-            NextTurn();
-        }
     }
 
-    protected override void RemovePlayer(Player player)
+    public override void RemovePlayer(Player player)
     {
         for (int i = 0; i < player.EstatesOwn.Count; i++)
         {
@@ -164,6 +149,21 @@ public class GameFlowControllerLocal : GameFlowController
 
         Players.Remove(player);
         Destroy(player.AvatarTransform.gameObject);
+
+        if (Teams.Count == 1)
+        {
+            GameEvents.MatchEnded?.Invoke(Teams[0]);
+            StartCoroutine(CloseRoom());
+        }
+        else if (Teams.Count == 0)
+        {
+            GameEvents.MatchEnded?.Invoke(null);
+            StartCoroutine(CloseRoom());
+        }
+        else
+        {
+            NextTurn();
+        }
     }
 
     private IEnumerator CloseRoom()

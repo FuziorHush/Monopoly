@@ -32,7 +32,7 @@ public abstract class GameFlowController : MonoSingleton<GameFlowController>
     public abstract void CreatePlayers();
     public abstract void MakeTurn();
     public abstract void NextTurn();
-    protected abstract void RemovePlayer(Player player);
+    public abstract void RemovePlayer(Player player);
 
     private void OnPlayerBalanceIsNegative(Player player, float balance) 
     {

@@ -47,7 +47,7 @@ public class EstatesControllerPhoton : EstatesController, IOnEventCallback
         float pledge = Mathf.RoundToInt(_targetEstate.CurrentQuantity / 2);
         BalancesController.Instance.AddBalance(_targetPlayer, pledge);
 
-        object[] data = new object[3] {GameFlowController.Instance.Players.IndexOf(_targetPlayer),  (byte)Estates.IndexOf(_targetEstate), pledge};
+        object[] data = new object[3] { (byte)_players.IndexOf(_targetPlayer),  (byte)Estates.IndexOf(_targetEstate), pledge};
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.EstatePledged, data, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -63,7 +63,7 @@ public class EstatesControllerPhoton : EstatesController, IOnEventCallback
         //target sets before
         BalancesController.Instance.WidthdrawBalance(_targetPlayer, _targetEstate.PledgedAmount);
 
-        object[] data = new object[2] { GameFlowController.Instance.Players.IndexOf(_targetPlayer), (byte)Estates.IndexOf(_targetEstate)};
+        object[] data = new object[2] { (byte)_players.IndexOf(_targetPlayer), (byte)Estates.IndexOf(_targetEstate)};
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent((byte)PhotonEventCodes.EstateUnpledged, data, raiseEventOptions, SendOptions.SendReliable);
     }

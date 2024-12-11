@@ -3,20 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class MusicController : MonoBehaviour
+public class MusicController : MonoSingleton<MusicController>
 {
     [SerializeField] private AudioClip _track;
     private AudioSource _audioSource;
 
-    private void Awake()
+    public bool MusicEnabled { get; private set; }
+
+    protected override void Awake()
     {
+        base.Awake();
+
         _audioSource = GetComponent<AudioSource>();
+        _audioSource.clip = _track;
+        _audioSource.loop = true;
     }
 
     private void Start()
     {
-        _audioSource.clip = _track;
-        _audioSource.loop = true;
-        _audioSource.Play();
+        EnableMusic();
+    }
+
+    public void EnableMusic()
+    {
+        if (!MusicEnabled)
+        {
+            _audioSource.Play();
+            MusicEnabled = true;
+        }
+    }
+
+    public void DisableMusic() 
+    {
+        if (MusicEnabled)
+        {
+            _audioSource.Stop();
+            MusicEnabled = false;
+        }
     }
 }

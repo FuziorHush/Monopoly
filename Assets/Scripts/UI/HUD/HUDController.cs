@@ -11,6 +11,7 @@ public class HUDController : MonoSingleton<HUDController>
     [SerializeField] private Button _tossDices;
     [SerializeField] private Button _newTurn;
     [SerializeField] private Button _getFree;
+    [SerializeField] private Button _musicButton;
     [SerializeField] private GameObject _balanceTextPrefab;
     [SerializeField] private Transform _balanceTextsParent;
     [SerializeField] private TMP_Text _playerTurnText;
@@ -32,7 +33,8 @@ public class HUDController : MonoSingleton<HUDController>
         _tossDices.onClick.AddListener(MakeTurn);
         _newTurn.onClick.AddListener(NewTurn);
         _getFree.onClick.AddListener(GetFree);
-         
+        _musicButton.onClick.AddListener(SwitchMusic);
+
         GameEvents.DicesTossed += OnDicesTossed;
         GameEvents.MoveAnimationStarted += OnAnimationStarted;
         GameEvents.MoveAnimationEnded += OnAnimationEnded;
@@ -73,6 +75,17 @@ public class HUDController : MonoSingleton<HUDController>
     private void GetFree()
     {
         JailController.Instance.UseGOJ(GameFlowController.Instance.PlayerWhoTurn);
+    }
+
+    private void SwitchMusic() 
+    {
+        if (MusicController.Instance.MusicEnabled)
+        {
+            MusicController.Instance.DisableMusic();
+        }
+        else {
+            MusicController.Instance.EnableMusic();
+        }
     }
 
     private void OnMatchStarted()
@@ -243,7 +256,7 @@ public class HUDController : MonoSingleton<HUDController>
         }
         else if (teamWinner.NumPlayers == 1)
         {
-            _endMessage.text = teamWinner[0] + " wins";
+            _endMessage.text = teamWinner[0].Name + " wins";
         }
         else {
             _endMessage.text = teamWinner.Name + " wins";

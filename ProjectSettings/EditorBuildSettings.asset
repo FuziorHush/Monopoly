@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/ZeroScene.unity
     guid: 855810291191cbb49aad36ea2d167040
   - enabled: 1
+    path: Assets/Scenes/ConnectToServer.unity
+    guid: 47d5dfb036130324da598f7d295c2594
+  - enabled: 1
     path: Assets/Scenes/Lobby.unity
     guid: 7c6ef9901eab3a94b8f1d04518f696fc
   - enabled: 1

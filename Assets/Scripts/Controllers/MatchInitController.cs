@@ -38,6 +38,7 @@ public class MatchInitController : MonoBehaviourPunCallbacks
             AddController<DecksControllerPhoton>("DecksController");
             AddController<EstatesControllerPhoton>("EstatesController");
             AddController<OlympControllerPhoton>("OlympController");
+            AddController<GamePhotonCallbacks>("GamePhotonCallbacks");
 
             GameEvents.ControllersCreated();
 
