@@ -23,4 +23,11 @@ public abstract class DecksController : MonoSingleton<DecksController>
 
     public abstract void TriggerChanceDeck(Player player);
     public abstract void TriggerLuckDeck(Player player);
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.ControllersCreated -= Init;
+    }
 }

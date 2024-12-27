@@ -21,12 +21,12 @@ public class HandOverPlayerUIItem : MonoBehaviour
         if (playerSender.Balance >= _amount1)
         {
             _give1.interactable = true;
-            _give1.onClick.AddListener(delegate { BankController.Instance.HandOverMoney(playerSender, targetPlayer, _amount1); });
+            _give1.onClick.AddListener(delegate { BankController.Instance.HandOverMoney(playerSender, targetPlayer, _amount1); DisableButtons(); });
         }
         if (playerSender.Balance >= _amount2)
         {
             _give2.interactable = true;
-            _give2.onClick.AddListener(delegate { BankController.Instance.HandOverMoney(playerSender, targetPlayer, _amount2); });
+            _give2.onClick.AddListener(delegate { BankController.Instance.HandOverMoney(playerSender, targetPlayer, _amount2); DisableButtons(); });
         }
     }
 

@@ -17,4 +17,11 @@ public abstract class BalancesController : MonoSingleton<BalancesController>
     public abstract void AddBalance(Player player, float amount);
     public abstract void WidthdrawBalance(Player player, float amount);
     public abstract void Transferbalance(Player playerSender, Player playerReceiver, float amount);
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.ControllersCreated -= Init;
+    }
 }

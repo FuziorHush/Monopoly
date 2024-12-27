@@ -3,6 +3,7 @@ using System.Collections.Generic;
 public abstract class EstatesController : MonoSingleton<EstatesController>
 {
     public List<Estate> Estates = new List<Estate>();
+    public List<float> Coefs { get; private set; }
     protected List<Player> _players;
 
     protected Player _targetPlayer;
@@ -14,6 +15,13 @@ public abstract class EstatesController : MonoSingleton<EstatesController>
         base.Awake();
 
         GameEvents.ControllersCreated += Init;
+
+        Coefs = new List<float>();
+        var coefsList = GamePropertiesController.GameProperties.TaxesCoefs;
+        for (int i = 0; i < coefsList.Count; i++)
+        {
+            Coefs.Add(coefsList[i].Coef);
+        }
     }
 
     private void Init() 
@@ -34,4 +42,11 @@ public abstract class EstatesController : MonoSingleton<EstatesController>
     public abstract void EstateCellClicked(Player player, Estate estate);
     public abstract void PledgeTargetEstate();
     public abstract void UnpledgeTargetEstate();
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.ControllersCreated -= Init;
+    }
 }

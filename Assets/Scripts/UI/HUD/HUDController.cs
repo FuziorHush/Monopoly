@@ -15,6 +15,7 @@ public class HUDController : MonoSingleton<HUDController>
     [SerializeField] private GameObject _balanceTextPrefab;
     [SerializeField] private Transform _balanceTextsParent;
     [SerializeField] private TMP_Text _playerTurnText;
+    [SerializeField] private Button _exitMatchButton;
 
     [SerializeField] private RectTransform _cardAnimation;
     [SerializeField] private float _cardAnimationOffset;
@@ -34,10 +35,13 @@ public class HUDController : MonoSingleton<HUDController>
         _newTurn.onClick.AddListener(NewTurn);
         _getFree.onClick.AddListener(GetFree);
         _musicButton.onClick.AddListener(SwitchMusic);
+        _exitMatchButton.onClick.AddListener(ExitMatch);
 
         GameEvents.DicesTossed += OnDicesTossed;
         GameEvents.MoveAnimationStarted += OnAnimationStarted;
         GameEvents.MoveAnimationEnded += OnAnimationEnded;
+        GameEvents.CardAnimationStarted += OnAnimationStarted;
+        GameEvents.CardAnimationEnded += OnAnimationEnded;
         GameEvents.PlayerBalanceAdded += OnPlayerBalanceAdded;
         GameEvents.PlayerBalanceWidthdrawn += OnPlayerBalanceWidthdrawn;
         GameEvents.BalanceTransfered += OnPlayerBalanceTransfered;
@@ -86,6 +90,11 @@ public class HUDController : MonoSingleton<HUDController>
         else {
             MusicController.Instance.EnableMusic();
         }
+    }
+
+    private void ExitMatch() 
+    {
+        GameFlowController.Instance.ExitMatch();
     }
 
     private void OnMatchStarted()
@@ -227,7 +236,8 @@ public class HUDController : MonoSingleton<HUDController>
         }
     }
 
-    private void OnCardTriggered(int cardID, CardDeck deck, Player player) {
+    private void OnCardTriggered(int cardID, CardDeck deck, Player player)
+    {
         if (deck is ChanceDeck)
         {
             _cardText.text = LanguageSystem.Instance[$"card_chance{cardID}"];
@@ -241,11 +251,11 @@ public class HUDController : MonoSingleton<HUDController>
 
     private IEnumerator PlayCardAnimation() 
     {
-        GameEvents.MoveAnimationStarted?.Invoke();
+        GameEvents.CardAnimationStarted?.Invoke();
         _cardAnimation.DOLocalMoveY(0, _cardAnimationTime);
         yield return new WaitForSeconds(_cardAnimationTime + _cardWaitTime);
         _cardAnimation.DOLocalMoveY(_cardAnimationOffset, _cardAnimationTime).OnComplete(delegate { _cardAnimation.anchoredPosition = new Vector3(0, -_cardAnimationOffset, 0); });
-        GameEvents.MoveAnimationEnded?.Invoke();
+        GameEvents.CardAnimationEnded?.Invoke();
     }
 
     private void OnMatchEnded(Team teamWinner)
@@ -261,5 +271,23 @@ public class HUDController : MonoSingleton<HUDController>
         else {
             _endMessage.text = teamWinner.Name + " wins";
         }
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.DicesTossed -= OnDicesTossed;
+        GameEvents.MoveAnimationStarted -= OnAnimationStarted;
+        GameEvents.MoveAnimationEnded -= OnAnimationEnded;
+        GameEvents.CardAnimationStarted -= OnAnimationStarted;
+        GameEvents.CardAnimationEnded -= OnAnimationEnded;
+        GameEvents.PlayerBalanceAdded -= OnPlayerBalanceAdded;
+        GameEvents.PlayerBalanceWidthdrawn -= OnPlayerBalanceWidthdrawn;
+        GameEvents.BalanceTransfered -= OnPlayerBalanceTransfered;
+        GameEvents.NewTurn -= OnNewTurn;
+        GameEvents.MatchStarted -= OnMatchStarted;
+        GameEvents.CardTriggered -= OnCardTriggered;
+        GameEvents.MatchEnded -= OnMatchEnded;
     }
 }

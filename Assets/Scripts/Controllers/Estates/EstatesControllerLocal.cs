@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EstatesControllerLocal : EstatesController
 {
+
     public override void Purchase(int lvl)
     {
         if (_targetEstate.Owner == _targetPlayer)
@@ -61,6 +62,7 @@ public class EstatesControllerLocal : EstatesController
         _targetPlayer.EstatesOwn.Add(_targetEstate);
         _targetEstate.Owner = _targetPlayer;
         _targetEstate.CurrentQuantity = _prices[lvl - 1];
+        _targetEstate.TaxesCoef = Coefs[lvl - 1];
         _targetEstate.Level = lvl;
 
         GameEvents.PlayerBoughtEstate?.Invoke(_targetPlayer, _targetEstate);
@@ -70,6 +72,7 @@ public class EstatesControllerLocal : EstatesController
     {
         BalancesController.Instance.WidthdrawBalance(_targetPlayer, _prices[lvl - 1]);
         _targetEstate.CurrentQuantity += _prices[lvl - 1];
+        _targetEstate.TaxesCoef = Coefs[lvl - 1];
         _targetEstate.Level = lvl;
 
         GameEvents.PlayerUpgradedEstate?.Invoke(_targetPlayer, _targetEstate);

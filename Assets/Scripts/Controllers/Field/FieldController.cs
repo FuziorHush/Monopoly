@@ -17,6 +17,7 @@ public abstract class FieldController : MonoSingleton<FieldController>
     {
         base.Awake();
         GameEvents.ControllersCreated += Init;
+        GameEvents.MoveAnimationEnded += OnAnimationEnd;
     }
 
     public void Init()
@@ -34,8 +35,16 @@ public abstract class FieldController : MonoSingleton<FieldController>
         _players = GameFlowController.Instance.Players;
     }
 
-    public abstract Transform CreatePlayerAvatar(int number, Photon.Realtime.Player networkPlayer = null);
     public abstract void GoOnCellByID(Player player, int cell);
     public abstract void GoForward(Player player, int steps);
     public abstract void GoBackward(Player player, int steps);
+    protected abstract void OnAnimationEnd();
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.ControllersCreated -= Init;
+        GameEvents.MoveAnimationEnded -= OnAnimationEnd;
+    }
 }

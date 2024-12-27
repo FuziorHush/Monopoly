@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class FieldCell : MonoBehaviour
 {
     public int CellID { get; set; }
+    public List<Player> PlayersOnCell { get; private set; } = new List<Player>();
 
     public virtual void Init() {  }
 
@@ -14,6 +15,14 @@ public abstract class FieldCell : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         Clicked(GameFlowController.Instance.PlayerWhoTurn);
+    }
+
+    public void AddPlayerOnCell(Player player) {
+        PlayersOnCell.Add(player);
+    }
+
+    public void RemovePlayerFromCell(Player player) {
+        PlayersOnCell.Remove(player);
     }
 
     public virtual void Clicked(Player player) 

@@ -10,7 +10,7 @@ public class GameFieldStaticData : MonoSingleton<GameFieldStaticData>
     }
 
     public FieldCell[] _cells;
-    public Vector2[] _playersPositionIndents;
+    public AvatarPositioning AvatarPositioning;
     public GameObject _playerAvatarPrefab;
     public Transform _playerAvatarsParent;
     public PlayerAvatarBuilder _playerAvatarBuilder;

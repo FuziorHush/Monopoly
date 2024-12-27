@@ -49,6 +49,13 @@ public abstract class JailController : MonoSingleton<JailController>
     public abstract void GiveGOJ(Player player);
     public abstract void UseGOJ(Player player);
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.ControllersCreated -= Init;
+    }
+
     public class JailedPlayer {
 
         public Player Player;

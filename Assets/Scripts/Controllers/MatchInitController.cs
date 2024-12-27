@@ -25,6 +25,7 @@ public class MatchInitController : MonoBehaviourPunCallbacks
             GameEvents.ControllersCreated();
 
             GameFlowController.Instance.CreatePlayers();
+            GameFieldStaticData.Instance.AvatarPositioning.PositionAvatrsAtStart();
             GameFlowController.Instance.StartMatch();
         }
 

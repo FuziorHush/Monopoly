@@ -11,9 +11,11 @@ public class GameFlowControllerLocal : GameFlowController
         for (int i = 0; i < LocalGameData.Instance.Players.Count; i++) 
         {
             int playersCount = Players.Count;
-            Transform playerAvatar = FieldController.Instance.CreatePlayerAvatar(playersCount);
+            Transform playerAvatar = GameFieldStaticData.Instance.AvatarPositioning.CreatePlayerAvatar(playersCount);
             Player player = new Player(LocalGameData.Instance.Players[i].Name, playersCount, playerAvatar, LocalGameData.Instance.Players[i].AvatarColor);
             player.Balance = _startBalance;
+            player.CellOn = GameFieldStaticData.Instance._cells[0];
+            GameFieldStaticData.Instance._cells[0].AddPlayerOnCell(player);
 
             Players.Add(player);
             AddPlayerToTeam(player, LocalGameData.Instance.Players[i].Team.ToString());
@@ -52,6 +54,7 @@ public class GameFlowControllerLocal : GameFlowController
         DicesActive = false;
         if (dicesValue.x == dicesValue.y)
         {
+            _diceDoublesInTurn++;
             if (_diceDoublesInTurn == 3)
             {
                 JailController.Instance.SendPlayerToJail(PlayerWhoTurn);
@@ -59,10 +62,11 @@ public class GameFlowControllerLocal : GameFlowController
                 NextTurn();
                 return;
             }
-            _diceDoublesInTurn++;
-            DicesActive = true;
-
-            Instantiate(GameFieldStaticData.Instance._doubleDicesEffect, GameFieldStaticData.Instance._doubleDicesEffectSpawnPoint.position, Quaternion.identity);
+            else
+            {
+                DicesActive = true;
+                Instantiate(GameFieldStaticData.Instance._doubleDicesEffect, GameFieldStaticData.Instance._doubleDicesEffectSpawnPoint.position, Quaternion.identity);
+            }
         }
         else
         {
@@ -164,6 +168,11 @@ public class GameFlowControllerLocal : GameFlowController
         {
             NextTurn();
         }
+    }
+
+    public override void ExitMatch()
+    {
+        SceneManager.LoadScene(1);
     }
 
     private IEnumerator CloseRoom()

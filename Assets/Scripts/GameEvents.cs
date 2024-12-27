@@ -12,6 +12,8 @@ public static class GameEvents
     public static UnityAction<Player> PlayerCreated;
     public static UnityAction MoveAnimationStarted;
     public static UnityAction MoveAnimationEnded;
+    public static UnityAction CardAnimationStarted;
+    public static UnityAction CardAnimationEnded;
     public static UnityAction<Player, int, int> PlayerMoved;
     public static UnityAction<Player, Estate> PlayerBoughtEstate;
     public static UnityAction<Player, Estate> PlayerUpgradedEstate;

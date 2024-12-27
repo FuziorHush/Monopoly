@@ -16,4 +16,11 @@ public abstract class BankController : MonoSingleton<BankController>
     {
         _players = GameFlowController.Instance.Players;
     }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.ControllersCreated -= Init;
+    }
 }

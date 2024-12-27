@@ -26,7 +26,7 @@ public class EstateFieldCell : FieldCell
         if (_estate.PledgedAmount > 0)
             return;
 
-        if (_estate.Owner == null || _estate.Owner == player)
+        if (_estate.Owner == null || _estate.Owner == player || _estate.Owner.Team == player.Team)//free or player's or teammate's
         {
             EstateMenu.Instance.Open(player, _estate);
         }
@@ -72,8 +72,12 @@ public class EstateFieldCell : FieldCell
         _pledgedEffect.color = Color.clear;
     }
 
-    public void UpdateBuildingSprite() {
-        _buildingsSprite.color = _estate.Owner.AvatarColor.FrontColor;
+    public void UpdateBuildingSprite() 
+    {
+        if (_estate.Owner != null)
+        {
+            _buildingsSprite.color = _estate.Owner.AvatarColor.FrontColor;
+        }
         if (_estate.Level == 0)
         {
             _buildingsSprite.sprite = null;

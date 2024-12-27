@@ -72,10 +72,12 @@ public class RoomManagerPhoton : MonoBehaviourPunCallbacks
         {
             _startButton.onClick.AddListener(StartGame);
             _startButton.interactable = true;
+            _startBalanceInput.interactable = true;
         }
         else
         {
             _startButton.interactable = false;
+            _startBalanceInput.interactable = false;
         }
 
         PhotonNetwork.CurrentRoom.IsOpen = PhotonNetwork.PlayerList.Length < 4;

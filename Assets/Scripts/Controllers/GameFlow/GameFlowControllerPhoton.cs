@@ -22,12 +22,13 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
     private void CreatePlayer_All() 
     {
         int playersCount = Players.Count;
-        print(playersCount);
         Photon.Realtime.Player networkPlayer = PhotonNetwork.PlayerList[playersCount];
-        Transform playerAvatar = FieldController.Instance.CreatePlayerAvatar(playersCount, networkPlayer);
+        Transform playerAvatar = GameFieldStaticData.Instance.AvatarPositioning.CreatePlayerAvatar(playersCount, networkPlayer);
         Player player = new Player(PhotonNetwork.PlayerList[playersCount].NickName, playersCount, playerAvatar, StaticData.Instance.AvatarColors[(int)networkPlayer.CustomProperties["Color"]]);
         player.NetworkPlayer = networkPlayer;
         player.Balance = GamePropertiesController.GameProperties.StartPlayerBalance;
+        player.CellOn = GameFieldStaticData.Instance._cells[0];
+        GameFieldStaticData.Instance._cells[0].AddPlayerOnCell(player);
 
         if (networkPlayer == PhotonNetwork.LocalPlayer)
             ControllerOwner = player;
@@ -61,6 +62,7 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
     private void StartMatch_All()
     {
         InitFirstTurn();
+        GameFieldStaticData.Instance.AvatarPositioning.PositionAvatrsAtStart();//cant be in init due to ping
         GameEvents.MatchStarted?.Invoke();
     }
 
@@ -80,6 +82,7 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
 
         if (_dicesResult.x == _dicesResult.y)
         {
+            _diceDoublesInTurn++;
             if (_diceDoublesInTurn == 3)
             {
                 JailController.Instance.SendPlayerToJail(ControllerOwner);
@@ -87,10 +90,11 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
                 NextTurn();
                 return;
             }
-            _diceDoublesInTurn++;
-            DicesActive = true;
-
-            Instantiate(GameFieldStaticData.Instance._doubleDicesEffect, GameFieldStaticData.Instance._doubleDicesEffectSpawnPoint.position, Quaternion.identity);
+            else
+            {
+                DicesActive = true;
+                Instantiate(GameFieldStaticData.Instance._doubleDicesEffect, GameFieldStaticData.Instance._doubleDicesEffectSpawnPoint.position, Quaternion.identity);
+            }
         }
         else
         {
@@ -202,6 +206,11 @@ public class GameFlowControllerPhoton : GameFlowController, IOnEventCallback
             if(PhotonNetwork.IsMasterClient)
             NextTurn();
         }
+    }
+
+    public override void ExitMatch()
+    {
+        PhotonNetwork.LeaveRoom();
     }
 
     private IEnumerator EndGame()

@@ -8,7 +8,7 @@ public class Estate
     public Estate(string name, float baseQuantity, EstateFieldCell cell) {
         Name = name;
         BaseQuantity = baseQuantity;
-        TaxesCoef = 0.1f;
+        TaxesCoef = 0f;
         CellLink = cell;
     }
 
@@ -30,6 +30,7 @@ public class Estate
         Owner = null;
         Level = 1;
         PledgedAmount = 0;
+        TaxesCoef = 0f;
 
         GameEvents.EstateReseted?.Invoke(this);
 

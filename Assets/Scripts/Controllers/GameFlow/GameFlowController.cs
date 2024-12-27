@@ -33,6 +33,7 @@ public abstract class GameFlowController : MonoSingleton<GameFlowController>
     public abstract void MakeTurn();
     public abstract void NextTurn();
     public abstract void RemovePlayer(Player player);
+    public abstract void ExitMatch();
 
     private void OnPlayerBalanceIsNegative(Player player, float balance) 
     {
@@ -41,4 +42,10 @@ public abstract class GameFlowController : MonoSingleton<GameFlowController>
 
     protected abstract void CheckIfPlayerCanPledge(Player player, float balance);
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        GameEvents.PlayerBalanceIsNegative -= OnPlayerBalanceIsNegative;
+    }
 }

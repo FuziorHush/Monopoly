@@ -116,6 +116,7 @@ public class EstatesControllerPhoton : EstatesController, IOnEventCallback
         _targetPlayer.EstatesOwn.Add(_targetEstate);
         _targetEstate.Owner = _targetPlayer;
         _targetEstate.CurrentQuantity = addedQuantity;
+        _targetEstate.TaxesCoef = Coefs[lvl - 1];
         _targetEstate.Level = lvl;
 
         if (_targetPlayer.NetworkPlayer == PhotonNetwork.LocalPlayer)
@@ -130,6 +131,7 @@ public class EstatesControllerPhoton : EstatesController, IOnEventCallback
     {
         //target sets before
         _targetEstate.CurrentQuantity += addedQuantity;
+        _targetEstate.TaxesCoef = Coefs[lvl - 1];
         _targetEstate.Level = lvl;
 
         if (_targetPlayer.NetworkPlayer == PhotonNetwork.LocalPlayer)

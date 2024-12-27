@@ -10,7 +10,7 @@ public class TrainFieldCell : FieldCell
 
     public override void Clicked(Player player)
     {
-        if (GameFlowController.Instance.PlayerWhoTurn.CellOn != CellID && GameFlowController.Instance.CurrentPlayerCanUseTrain)
+        if (GameFlowController.Instance.PlayerWhoTurn.CellOn.CellID != CellID && GameFlowController.Instance.CurrentPlayerCanUseTrain)
         {
             FieldController.Instance.GoOnCellByID(player, CellID);
             GameFlowController.Instance.DontInteractWithNextCell = true;

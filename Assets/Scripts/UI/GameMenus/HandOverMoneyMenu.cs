@@ -23,6 +23,7 @@ public class HandOverMoneyMenu : MonoSingleton<HandOverMoneyMenu>
     {
         base.Awake();
         GameEvents.NewTurn += OnNewTurn;
+        GameEvents.DicesTossed += OnDicesTossed;
 
         _windowGameObject.GetComponent<RectTransform>().anchoredPosition = new Vector3(_windowOffset, 0, 0);
     }
@@ -83,6 +84,11 @@ public class HandOverMoneyMenu : MonoSingleton<HandOverMoneyMenu>
 
     private void OnNewTurn(Player player) {
         if(MenuIsOpen)
+        CloseMenu();
+    }
+
+    private void OnDicesTossed(Vector2Int result)
+    {
         CloseMenu();
     }
 }

@@ -16,7 +16,7 @@ public class BankFieldCell : FieldCell
 
     protected override void ShowInfo()
     {
-        InfoMenu.Instance.ShowInfoStart();
+        InfoMenu.Instance.ShowInfoBank();
     }
 
     public override void Clicked(Player player)

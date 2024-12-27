@@ -100,5 +100,28 @@
       "Name": "New York",
       "BaseQuantity": "300"
     }
+  ],
+
+  "TaxesCoefs": [
+    {
+      "Level": 1,
+      "Coef": 0.1
+    },
+    {
+      "Level": 2,
+      "Coef": 0.25
+    },
+    {
+      "Level": 3,
+      "Coef": 0.4
+    },
+    {
+      "Level": 4,
+      "Coef": 0.5
+    },
+    {
+      "Level": 5,
+      "Coef": 0.6
+    }
   ]
 }

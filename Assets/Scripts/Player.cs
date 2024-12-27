@@ -31,7 +31,7 @@ public class Player
     }
 
     public int GOJHas { get; set; }
-    public int CellOn { get; set; }
+    public FieldCell CellOn { get; set; }
     public int Loops { get; set; }
     public Team Team { get; set; }
     public List<Estate> EstatesOwn { get; private set; }
